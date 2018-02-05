@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njxz.exam.dao.ExamQuestiontypeMapper">
+  <resultMap id="BaseResultMap" type="com.njxz.exam.modle.ExamQuestiontype">
+    <id column="e_t_id" jdbcType="BIGINT" property="eTId" />
+    <result column="exam_id" jdbcType="BIGINT" property="examId" />
+    <result column="question_type_id" jdbcType="BIGINT" property="questionTypeId" />
+    <result column="question_num" jdbcType="SMALLINT" property="questionNum" />
+    <result column="type_score" jdbcType="SMALLINT" property="typeScore" />
+    <result column="type_sort" jdbcType="TINYINT" property="typeSort" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    e_t_id, exam_id, question_type_id, question_num, type_score, type_sort
+  </sql>
+  <select id="selectByExample" parameterType="com.njxz.exam.modle.ExamQuestiontypeExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from exam_questiontype
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from exam_questiontype
+    where e_t_id = #{eTId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from exam_questiontype
+    where e_t_id = #{eTId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.njxz.exam.modle.ExamQuestiontypeExample">
+    delete from exam_questiontype
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.njxz.exam.modle.ExamQuestiontype">
+    insert into exam_questiontype (e_t_id, exam_id, question_type_id, 
+      question_num, type_score, type_sort
+      )
+    values (#{eTId,jdbcType=BIGINT}, #{examId,jdbcType=BIGINT}, #{questionTypeId,jdbcType=BIGINT}, 
+      #{questionNum,jdbcType=SMALLINT}, #{typeScore,jdbcType=SMALLINT}, #{typeSort,jdbcType=TINYINT}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.njxz.exam.modle.ExamQuestiontype">
+    insert into exam_questiontype
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="eTId != null">
+        e_t_id,
+      </if>
+      <if test="examId != null">
+        exam_id,
+      </if>
+      <if test="questionTypeId != null">
+        question_type_id,
+      </if>
+      <if test="questionNum != null">
+        question_num,
+      </if>
+      <if test="typeScore != null">
+        type_score,
+      </if>
+      <if test="typeSort != null">
+        type_sort,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="eTId != null">
+        #{eTId,jdbcType=BIGINT},
+      </if>
+      <if test="examId != null">
+        #{examId,jdbcType=BIGINT},
+      </if>
+      <if test="questionTypeId != null">
+        #{questionTypeId,jdbcType=BIGINT},
+      </if>
+      <if test="questionNum != null">
+        #{questionNum,jdbcType=SMALLINT},
+      </if>
+      <if test="typeScore != null">
+        #{typeScore,jdbcType=SMALLINT},
+      </if>
+      <if test="typeSort != null">
+        #{typeSort,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.njxz.exam.modle.ExamQuestiontypeExample" resultType="java.lang.Long">
+    select count(*) from exam_questiontype
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update exam_questiontype
+    <set>
+      <if test="record.eTId != null">
+        e_t_id = #{record.eTId,jdbcType=BIGINT},
+      </if>
+      <if test="record.examId != null">
+        exam_id = #{record.examId,jdbcType=BIGINT},
+      </if>
+      <if test="record.questionTypeId != null">
+        question_type_id = #{record.questionTypeId,jdbcType=BIGINT},
+      </if>
+      <if test="record.questionNum != null">
+        question_num = #{record.questionNum,jdbcType=SMALLINT},
+      </if>
+      <if test="record.typeScore != null">
+        type_score = #{record.typeScore,jdbcType=SMALLINT},
+      </if>
+      <if test="record.typeSort != null">
+        type_sort = #{record.typeSort,jdbcType=TINYINT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update exam_questiontype
+    set e_t_id = #{record.eTId,jdbcType=BIGINT},
+      exam_id = #{record.examId,jdbcType=BIGINT},
+      question_type_id = #{record.questionTypeId,jdbcType=BIGINT},
+      question_num = #{record.questionNum,jdbcType=SMALLINT},
+      type_score = #{record.typeScore,jdbcType=SMALLINT},
+      type_sort = #{record.typeSort,jdbcType=TINYINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.njxz.exam.modle.ExamQuestiontype">
+    update exam_questiontype
+    <set>
+      <if test="examId != null">
+        exam_id = #{examId,jdbcType=BIGINT},
+      </if>
+      <if test="questionTypeId != null">
+        question_type_id = #{questionTypeId,jdbcType=BIGINT},
+      </if>
+      <if test="questionNum != null">
+        question_num = #{questionNum,jdbcType=SMALLINT},
+      </if>
+      <if test="typeScore != null">
+        type_score = #{typeScore,jdbcType=SMALLINT},
+      </if>
+      <if test="typeSort != null">
+        type_sort = #{typeSort,jdbcType=TINYINT},
+      </if>
+    </set>
+    where e_t_id = #{eTId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.njxz.exam.modle.ExamQuestiontype">
+    update exam_questiontype
+    set exam_id = #{examId,jdbcType=BIGINT},
+      question_type_id = #{questionTypeId,jdbcType=BIGINT},
+      question_num = #{questionNum,jdbcType=SMALLINT},
+      type_score = #{typeScore,jdbcType=SMALLINT},
+      type_sort = #{typeSort,jdbcType=TINYINT}
+    where e_t_id = #{eTId,jdbcType=BIGINT}
+  </update>
+  
+  <!-- 增加多条 -->
+  <insert id="insertList" parameterType="java.util.List">
+  	<selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">  
+        SELECT  
+        LAST_INSERT_ID()  
+    </selectKey> 
+    insert into exam_questiontype(exam_id,question_type_id,question_num,type_score,type_sort) values
+    <foreach collection="list" item="item" index="index" separator=",">
+    	(#{item.examId,jdbcType=BIGINT},#{item.questionTypeId,jdbcType=BIGINT},#{item.questionNum,jdbcType=SMALLINT},#{item.typeScore,jdbcType=SMALLINT},#{item.typeSort,jdbcType=TINYINT})
+    </foreach>
+  </insert>
+</mapper>

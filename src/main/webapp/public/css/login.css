@@ -1,0 +1,71 @@
+.error{
+	color:#FF4500;
+}
+
+label.error{
+	color:#FF4500;
+}
+input.error{
+	background:#A87860;
+}
+
+body{
+	background-color: #A8C0F0;
+	background: url(../images/tao.png);
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: 100% 100%;
+	/*背景图垂直、水平均居中*/
+	/*当内容高度大于图片高度时，背景图像的位置相对于viewport固定*/
+	/* background-size:cover; */
+	/* font-family: "Helvetica Neue",Helvetica,Arial,sans-serif; */
+}
+h2{
+	color:#333;
+	padding:10px 10px;
+}
+
+h2 img{
+	height:60px;
+}
+.background{
+	/* background-image: url(../images/tao.png); */
+	background-color: #A8C0F0;
+	width:500px;
+	height:350px;
+	margin: 0 auto;
+	margin-top:10%;
+	border-radius:5px;
+	/*设置半透明滤镜效果*/
+	/* filter:alpha(Opacity=80); */
+	opacity:0.5;
+	/*边框阴影*/
+	box-shadow:#666 0px 0px 10px;
+}
+
+.login_form{
+	padding-top:5px;
+}
+
+label{
+	font-size:20px;
+	margin-left:20%;
+	padding-top:5px;
+}
+
+input{
+	 border: 1px solid #ccc; 
+     font-size:18px;
+     margin-left:20%;
+     width:60%;
+     height:40px;
+     border-radius: 6px;
+}
+input:-webkit-autofill {
+   -webkit-box-shadow: 0 0 0 1000px white inset !important;
+}
+button{
+	height:40px;
+	width:100px;
+	margin:10px 40%;	
+}

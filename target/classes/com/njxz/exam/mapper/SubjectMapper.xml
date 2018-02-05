@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njxz.exam.dao.SubjectMapper">
+  <resultMap id="BaseResultMap" type="com.njxz.exam.modle.Subject">
+    <id column="s_id" jdbcType="BIGINT" property="sId" />
+    <result column="s_title" jdbcType="VARCHAR" property="sTitle" />
+    <result column="s_add_time" jdbcType="TIMESTAMP" property="sAddTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.njxz.exam.modle.Subject">
+    <result column="s_desc" jdbcType="LONGVARCHAR" property="sDesc" />
+  </resultMap>
+  
+  <select id="selectAllSubject" resultMap="ResultMapWithBLOBs">
+  	select * from subject
+  </select>
+  
+  
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    s_id, s_title, s_add_time
+  </sql>
+  <sql id="Blob_Column_List">
+    s_desc
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.njxz.exam.modle.SubjectExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from subject
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.njxz.exam.modle.SubjectExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from subject
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from subject
+    where s_id = #{sId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from subject
+    where s_id = #{sId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.njxz.exam.modle.SubjectExample">
+    delete from subject
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.njxz.exam.modle.Subject">
+    insert into subject (s_id, s_title, s_add_time, 
+      s_desc)
+    values (#{sId,jdbcType=BIGINT}, #{sTitle,jdbcType=VARCHAR}, #{sAddTime,jdbcType=TIMESTAMP}, 
+      #{sDesc,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.njxz.exam.modle.Subject">
+    insert into subject
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sId != null">
+        s_id,
+      </if>
+      <if test="sTitle != null">
+        s_title,
+      </if>
+      <if test="sAddTime != null">
+        s_add_time,
+      </if>
+      <if test="sDesc != null">
+        s_desc,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sId != null">
+        #{sId,jdbcType=BIGINT},
+      </if>
+      <if test="sTitle != null">
+        #{sTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="sAddTime != null">
+        #{sAddTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sDesc != null">
+        #{sDesc,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.njxz.exam.modle.SubjectExample" resultType="java.lang.Long">
+    select count(*) from subject
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update subject
+    <set>
+      <if test="record.sId != null">
+        s_id = #{record.sId,jdbcType=BIGINT},
+      </if>
+      <if test="record.sTitle != null">
+        s_title = #{record.sTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sAddTime != null">
+        s_add_time = #{record.sAddTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.sDesc != null">
+        s_desc = #{record.sDesc,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update subject
+    set s_id = #{record.sId,jdbcType=BIGINT},
+      s_title = #{record.sTitle,jdbcType=VARCHAR},
+      s_add_time = #{record.sAddTime,jdbcType=TIMESTAMP},
+      s_desc = #{record.sDesc,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update subject
+    set s_id = #{record.sId,jdbcType=BIGINT},
+      s_title = #{record.sTitle,jdbcType=VARCHAR},
+      s_add_time = #{record.sAddTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.njxz.exam.modle.Subject">
+    update subject
+    <set>
+      <if test="sTitle != null">
+        s_title = #{sTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="sAddTime != null">
+        s_add_time = #{sAddTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sDesc != null">
+        s_desc = #{sDesc,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where s_id = #{sId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.njxz.exam.modle.Subject">
+    update subject
+    set s_title = #{sTitle,jdbcType=VARCHAR},
+      s_add_time = #{sAddTime,jdbcType=TIMESTAMP},
+      s_desc = #{sDesc,jdbcType=LONGVARCHAR}
+    where s_id = #{sId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.njxz.exam.modle.Subject">
+    update subject
+    set s_title = #{sTitle,jdbcType=VARCHAR},
+      s_add_time = #{sAddTime,jdbcType=TIMESTAMP}
+    where s_id = #{sId,jdbcType=BIGINT}
+  </update>
+</mapper>

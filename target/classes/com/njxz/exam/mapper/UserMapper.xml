@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njxz.exam.dao.UserMapper">
+	<resultMap id="BaseResultMap" type="com.njxz.exam.modle.User">
+		<id column="u_id" jdbcType="BIGINT" property="uId" />
+		<result column="username" jdbcType="VARCHAR" property="username" />
+		<result column="password" jdbcType="VARCHAR" property="password" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="power" jdbcType="TINYINT" property="power" />
+		<result column="parent_id" jdbcType="BIGINT" property="parentId" />
+		<result column="regist_time" jdbcType="TIMESTAMP" property="registTime" />
+		<result column="recent_login_time" jdbcType="TIMESTAMP"
+			property="recentLoginTime" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" prefixOverrides="and" suffix=")">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach close=")" collection="criterion.value" item="listItem"
+										open="(" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria"
+				separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" prefixOverrides="and" suffix=")">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and
+									#{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach close=")" collection="criterion.value" item="listItem"
+										open="(" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	 <sql id="Base_Column_List">
+		u_id, username, password, name, power, parent_id, regist_time,
+		recent_login_time
+	</sql>
+	<select id="selectByExample" parameterType="com.njxz.exam.modle.UserExample"
+		resultMap="BaseResultMap">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		<include refid="Base_Column_List" />
+		from user
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long"
+		resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from user
+		where u_id = #{uId,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from user
+		where u_id = #{uId,jdbcType=BIGINT}
+	</delete>
+	<delete id="deleteByExample" parameterType="com.njxz.exam.modle.UserExample">
+		delete from user
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.njxz.exam.modle.User">
+		insert into user (u_id, username, password,
+		name, power, parent_id,
+		regist_time, recent_login_time)
+		values (#{uId,jdbcType=BIGINT}, #{username,jdbcType=VARCHAR},
+		#{password,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR}, #{power,jdbcType=TINYINT}, #{parentId,jdbcType=SMALLINT},
+		#{registTime,jdbcType=TIMESTAMP},
+		#{recentLoginTime,jdbcType=TIMESTAMP})
+	</insert>
+	
+	<select id="countByExample" parameterType="com.njxz.exam.modle.UserExample"
+		resultType="java.lang.Long">
+		select count(*) from user
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update user
+		<set>
+			<if test="record.uId != null">
+				u_id = #{record.uId,jdbcType=BIGINT},
+			</if>
+			<if test="record.username != null">
+				username = #{record.username,jdbcType=VARCHAR},
+			</if>
+			<if test="record.password != null">
+				password = #{record.password,jdbcType=VARCHAR},
+			</if>
+			<if test="record.name != null">
+				name = #{record.name,jdbcType=VARCHAR},
+			</if>
+			<if test="record.power != null">
+				power = #{record.power,jdbcType=TINYINT},
+			</if>
+			<if test="record.parentId != null">
+				parent_id = #{record.parentId,jdbcType=SMALLINT},
+			</if>
+			<if test="record.registTime != null">
+				regist_time = #{record.registTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="record.recentLoginTime != null">
+				recent_login_time = #{record.recentLoginTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update user
+		set u_id = #{record.uId,jdbcType=BIGINT},
+		username = #{record.username,jdbcType=VARCHAR},
+		password = #{record.password,jdbcType=VARCHAR},
+		name = #{record.name,jdbcType=VARCHAR},
+		power = #{record.power,jdbcType=TINYINT},
+		parent_id = #{record.parentId,jdbcType=SMALLINT},
+		regist_time = #{record.registTime,jdbcType=TIMESTAMP},
+		recent_login_time = #{record.recentLoginTime,jdbcType=TIMESTAMP}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective" parameterType="com.njxz.exam.modle.User">
+		update user
+		<set>
+			<if test="username != null">
+				username = #{username,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				password = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="power != null">
+				power = #{power,jdbcType=TINYINT},
+			</if>
+			<if test="parentId != null">
+				parent_id = #{parentId,jdbcType=SMALLINT},
+			</if>
+			<if test="registTime != null">
+				regist_time = #{registTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="recentLoginTime != null">
+				recent_login_time = #{recentLoginTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where u_id = #{uId,jdbcType=BIGINT}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.njxz.exam.modle.User">
+		update user
+		set username = #{username,jdbcType=VARCHAR},
+		password = #{password,jdbcType=VARCHAR},
+		name = #{name,jdbcType=VARCHAR},
+		power = #{power,jdbcType=TINYINT},
+		parent_id = #{parentId,jdbcType=SMALLINT},
+		regist_time = #{registTime,jdbcType=TIMESTAMP},
+		recent_login_time = #{recentLoginTime,jdbcType=TIMESTAMP}
+		where u_id = #{uId,jdbcType=BIGINT}
+	</update>
+
+	
+	<insert id="insertSelective" parameterType="com.njxz.exam.modle.User">
+		insert into user
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="uId != null">
+				u_id,
+			</if>
+			<if test="username != null">
+				username,
+			</if>
+			<if test="password != null">
+				password,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="power != null">
+				power,
+			</if>
+			<if test="parentId != null">
+				parent_id,
+			</if>
+			<if test="registTime != null">
+				regist_time,
+			</if>
+			<if test="recentLoginTime != null">
+				recent_login_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="uId != null">
+				#{uId,jdbcType=BIGINT},
+			</if>
+			<if test="username != null">
+				#{username,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=VARCHAR},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="power != null">
+				#{power,jdbcType=TINYINT},
+			</if>
+			<if test="parentId != null">
+				#{parentId,jdbcType=SMALLINT},
+			</if>
+			<if test="registTime != null">
+				#{registTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="recentLoginTime != null">
+				#{recentLoginTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	
+	
+	
+</mapper>

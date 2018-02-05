@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webflow-project-description>
+	<version>1</version>
+	<pluginVersion><![CDATA[3.8.4.201703310634-RELEASE]]></pluginVersion>
+	<configs>
+		<config>
+			<file>src/main/webapp/WEB-INF/config/spring/q.xml</file>
+			<name><![CDATA[q]]></name>
+		</config>
+	</configs>
+</webflow-project-description>

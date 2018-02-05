@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njxz.exam.dao.BackupDbMapper">
+  <resultMap id="BaseResultMap" type="com.njxz.exam.modle.BackupDb">
+    <id column="b_id" jdbcType="BIGINT" property="bId" />
+    <result column="user_id" jdbcType="SMALLINT" property="userId" />
+    <result column="b_file_name" jdbcType="VARCHAR" property="bFileName" />
+    <result column="b_time" jdbcType="TIMESTAMP" property="bTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    b_id, user_id, b_file_name, b_time
+  </sql>
+  <select id="selectByExample" parameterType="com.njxz.exam.modle.BackupDbExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from backup_db
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from backup_db
+    where b_id = #{bId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from backup_db
+    where b_id = #{bId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.njxz.exam.modle.BackupDbExample">
+    delete from backup_db
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.njxz.exam.modle.BackupDb">
+    insert into backup_db (b_id, user_id, b_file_name, 
+      b_time)
+    values (#{bId,jdbcType=BIGINT}, #{userId,jdbcType=SMALLINT}, #{bFileName,jdbcType=VARCHAR}, 
+      #{bTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.njxz.exam.modle.BackupDb">
+    insert into backup_db
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="bId != null">
+        b_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="bFileName != null">
+        b_file_name,
+      </if>
+      <if test="bTime != null">
+        b_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="bId != null">
+        #{bId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=SMALLINT},
+      </if>
+      <if test="bFileName != null">
+        #{bFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="bTime != null">
+        #{bTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.njxz.exam.modle.BackupDbExample" resultType="java.lang.Long">
+    select count(*) from backup_db
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update backup_db
+    <set>
+      <if test="record.bId != null">
+        b_id = #{record.bId,jdbcType=BIGINT},
+      </if>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=SMALLINT},
+      </if>
+      <if test="record.bFileName != null">
+        b_file_name = #{record.bFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bTime != null">
+        b_time = #{record.bTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update backup_db
+    set b_id = #{record.bId,jdbcType=BIGINT},
+      user_id = #{record.userId,jdbcType=SMALLINT},
+      b_file_name = #{record.bFileName,jdbcType=VARCHAR},
+      b_time = #{record.bTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.njxz.exam.modle.BackupDb">
+    update backup_db
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=SMALLINT},
+      </if>
+      <if test="bFileName != null">
+        b_file_name = #{bFileName,jdbcType=VARCHAR},
+      </if>
+      <if test="bTime != null">
+        b_time = #{bTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where b_id = #{bId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.njxz.exam.modle.BackupDb">
+    update backup_db
+    set user_id = #{userId,jdbcType=SMALLINT},
+      b_file_name = #{bFileName,jdbcType=VARCHAR},
+      b_time = #{bTime,jdbcType=TIMESTAMP}
+    where b_id = #{bId,jdbcType=BIGINT}
+  </update>
+</mapper>

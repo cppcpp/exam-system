@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njxz.exam.dao.QuestionCorrectRatioMapper">
+  <resultMap id="BaseResultMap" type="com.njxz.exam.modle.QuestionCorrectRatio">
+    <id column="q_response_id" jdbcType="BIGINT" property="qResponseId" />
+    <result column="question_id" jdbcType="INTEGER" property="questionId" />
+    <result column="q_response_time" jdbcType="TIMESTAMP" property="qResponseTime" />
+    <result column="q_did_num" jdbcType="INTEGER" property="qDidNum" />
+    <result column="q_correct_num" jdbcType="INTEGER" property="qCorrectNum" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    q_response_id, question_id, q_response_time, q_did_num, q_correct_num
+  </sql>
+  <select id="selectByExample" parameterType="com.njxz.exam.modle.QuestionCorrectRatioExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from question_correct_ratio
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from question_correct_ratio
+    where q_response_id = #{qResponseId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from question_correct_ratio
+    where q_response_id = #{qResponseId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.njxz.exam.modle.QuestionCorrectRatioExample">
+    delete from question_correct_ratio
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.njxz.exam.modle.QuestionCorrectRatio">
+    insert into question_correct_ratio (q_response_id, question_id, q_response_time, 
+      q_did_num, q_correct_num)
+    values (#{qResponseId,jdbcType=BIGINT}, #{questionId,jdbcType=INTEGER}, #{qResponseTime,jdbcType=TIMESTAMP}, 
+      #{qDidNum,jdbcType=INTEGER}, #{qCorrectNum,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.njxz.exam.modle.QuestionCorrectRatio">
+    insert into question_correct_ratio
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="qResponseId != null">
+        q_response_id,
+      </if>
+      <if test="questionId != null">
+        question_id,
+      </if>
+      <if test="qResponseTime != null">
+        q_response_time,
+      </if>
+      <if test="qDidNum != null">
+        q_did_num,
+      </if>
+      <if test="qCorrectNum != null">
+        q_correct_num,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="qResponseId != null">
+        #{qResponseId,jdbcType=BIGINT},
+      </if>
+      <if test="questionId != null">
+        #{questionId,jdbcType=INTEGER},
+      </if>
+      <if test="qResponseTime != null">
+        #{qResponseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="qDidNum != null">
+        #{qDidNum,jdbcType=INTEGER},
+      </if>
+      <if test="qCorrectNum != null">
+        #{qCorrectNum,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.njxz.exam.modle.QuestionCorrectRatioExample" resultType="java.lang.Long">
+    select count(*) from question_correct_ratio
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update question_correct_ratio
+    <set>
+      <if test="record.qResponseId != null">
+        q_response_id = #{record.qResponseId,jdbcType=BIGINT},
+      </if>
+      <if test="record.questionId != null">
+        question_id = #{record.questionId,jdbcType=INTEGER},
+      </if>
+      <if test="record.qResponseTime != null">
+        q_response_time = #{record.qResponseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.qDidNum != null">
+        q_did_num = #{record.qDidNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.qCorrectNum != null">
+        q_correct_num = #{record.qCorrectNum,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update question_correct_ratio
+    set q_response_id = #{record.qResponseId,jdbcType=BIGINT},
+      question_id = #{record.questionId,jdbcType=INTEGER},
+      q_response_time = #{record.qResponseTime,jdbcType=TIMESTAMP},
+      q_did_num = #{record.qDidNum,jdbcType=INTEGER},
+      q_correct_num = #{record.qCorrectNum,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.njxz.exam.modle.QuestionCorrectRatio">
+    update question_correct_ratio
+    <set>
+      <if test="questionId != null">
+        question_id = #{questionId,jdbcType=INTEGER},
+      </if>
+      <if test="qResponseTime != null">
+        q_response_time = #{qResponseTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="qDidNum != null">
+        q_did_num = #{qDidNum,jdbcType=INTEGER},
+      </if>
+      <if test="qCorrectNum != null">
+        q_correct_num = #{qCorrectNum,jdbcType=INTEGER},
+      </if>
+    </set>
+    where q_response_id = #{qResponseId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.njxz.exam.modle.QuestionCorrectRatio">
+    update question_correct_ratio
+    set question_id = #{questionId,jdbcType=INTEGER},
+      q_response_time = #{qResponseTime,jdbcType=TIMESTAMP},
+      q_did_num = #{qDidNum,jdbcType=INTEGER},
+      q_correct_num = #{qCorrectNum,jdbcType=INTEGER}
+    where q_response_id = #{qResponseId,jdbcType=BIGINT}
+  </update>
+</mapper>

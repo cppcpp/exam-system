@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/tx 
+       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/aop 
+       http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+	
+
+	<!-- 激活对标签支持的生命周期的管理 :@Required,@Autowired.JSR 250`s,@PostConstruct and 
+		@Resource 隐式的 像其中注入这几个BeanPostProcessor -->
+	<context:annotation-config />
+	<!-- DispatcherServlet上下文，只搜索@Controller标注的类，不搜索其他的类 -->
+	<!-- <context:component-scan base-package="com.njxz.exam.controller"> <context:include-filter 
+		type="annotation" expression="org.springframework.stereotype.Controller"/> 
+		</context:component-scan> -->
+	
+    <context:component-scan base-package="com.njxz.exam.*" />  
+    <aop:aspectj-autoproxy expose-proxy="true"/>
+
+	<!-- HandlerMapping无需配置，spring默认开启DefaultAnnotationHandlerMapping -->
+
+	<!--告诉spring，启动注解驱动，会将这几个bean注册到bean工厂中： RequestMappingHandlerMapping BeanNameUrlHandlerMapping 
+		RequestMappingHandlerAdapter HttpRequestHandlerAdapter SimpleControllerHandlerAdpter 
+		ExceptionHandlrExceptionResolver ResponseStatusExceptionResolver DefaultHandlerExceptionResolver -->
+	<mvc:annotation-driven validator="validator"/>
+
+	<!-- 使用默认的静态资源处理器处理静态资源 :将静态资源转发给web服务器默认的servlet处理，而不是本身处理静态资源 
+	一般web服务器默认的servlet名字是“default”,如果不是，通过default-servlet-name属性指定-->
+	<mvc:default-servlet-handler/>
+	<!-- 由springMVC自己处理静态资源 -->
+	<!-- <mvc:resources location="/public/" mapping="/public/**"/> -->
+
+	<!-- ViewResolver把逻辑视图渲染成具体的View -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- 将视图解析成JstlView,而不是InternalResourceView 
+		确保JSTL获取Local和Spring的信息资源-->
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+		<property name="contentType" value="text/html" />
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!-- 校验器 -->
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<!-- 校验器 -->
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+		<!-- 指定校验使用的资源文件，在文件中配置校验的错误信息，如果不指定则默认使用classpath下的ValidationMessages.properties -->
+		<!-- <property name="validationMessageSource" ref="messageSource" /> -->
+	</bean>
+	<!-- 校验错误信息配置文件 -->
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<!-- 资源文件名 -->
+		<property name="basenames">
+			<list>
+				<value>classpath:CustomValidationMessages.properties</value>
+			</list>
+		</property>
+		<!-- 资源文件编码格式 -->
+		<property name="fileEncodings" value="utf-8" />
+		<!-- 对资源文件内容缓存时间，单位秒 -->
+		<property name="cacheSeconds" value="120" />
+	</bean>
+	
+	<!-- springMVC上传文件 -->
+	<bean id="multipartResolver"    
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">    
+        <!-- set the max upload size100MB -->    
+        <property name="maxUploadSize">    
+            <value>104857600</value>    
+        </property>    
+        <property name="maxInMemorySize">    
+            <value>4096</value>    
+        </property>   
+        <property name="defaultEncoding">  
+            <value>utf-8</value>  
+        </property>  
+    </bean>    
+</beans>
