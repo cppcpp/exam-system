@@ -9,4 +9,5 @@ public interface ExamQuestionsService {
 	public int add(ExamQuestions examQuestions);
 	//添加多条
 	public int add(List<ExamQuestions> eqList);
+	
 }

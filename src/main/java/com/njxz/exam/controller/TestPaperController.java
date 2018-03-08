@@ -25,7 +25,6 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +37,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.njxz.exam.modle.AddException;
 import com.njxz.exam.modle.Exam;
+import com.njxz.exam.modle.ExamQuestiontype;
 import com.njxz.exam.modle.KnowledgePoints;
 import com.njxz.exam.modle.QuestionType;
 import com.njxz.exam.modle.Questions;
@@ -55,7 +55,6 @@ import com.njxz.exam.service.QuestionTypeService;
 import com.njxz.exam.service.SubjectService;
 import com.njxz.exam.service.UserService;
 import com.njxz.exam.util.Constants;
-import com.njxz.exam.util.ImageConverter;
 import com.njxz.exam.util.Logable;
 import com.njxz.exam.util.RichHtmlHandler;
 import com.njxz.exam.util.StringUtil;
@@ -63,7 +62,6 @@ import com.njxz.exam.util.StringUtil;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import sun.util.resources.cldr.CalendarData;
 
 @Controller
 @RequestMapping(value = "/testPaper")
@@ -97,7 +95,10 @@ public class TestPaperController extends Logable{
 	
 	@Autowired
 	private ExamQuestiontypeService eqtService;
-
+	
+	@Autowired
+	private ExamQuestionsService eqService;
+	
 	// 抽取现有试卷
 	@RequestMapping(value = "/get", method = RequestMethod.GET)
 	public ModelAndView getPaperPage(@RequestParam(value="pageNum",required = false, defaultValue = "1") Integer pageNum,
@@ -148,13 +149,14 @@ public class TestPaperController extends Logable{
 	}
 
 	//根据试卷Id生成word
-	@RequestMapping(value="/exportWord/${eId}/${eType}",method=RequestMethod.GET)
+	@RequestMapping(value="/exportWord/{eId}/{eType}",method=RequestMethod.GET)
 	public void exportWord(@PathVariable(name="eId",required=true)Long eId,
 			@PathVariable(name="eType",required=true)int eType) throws IOException {
 		String directoryName=Constants.WORD_TEMPLETE_DIRECTORY_NAME;
 		Map<String,Object> resultMap=new HashMap<>();
 		Map<String, String> contentMap=new HashMap<>();
 		
+		//模板存放的实际地址
 		String t=request.getSession().getServletContext().getRealPath("");
         String realPath=t.substring(0, t.lastIndexOf('\\'))+"\\"+directoryName;
         System.out.println("wordTemplete_realPath:-------------"+realPath);
@@ -179,12 +181,12 @@ public class TestPaperController extends Logable{
 		resultMap.put("stopYear", stopYear);
 		resultMap.put("semester",semester);
 		
-		//题型个数
-		int count=eqtService.countByEId(eId);
+		//题型个数--试题头部打分的表格--scoreThList   scoreList
+		int eqtCount=eqtService.countByEId(eId);
 		
 		List<String> scoreThList=new ArrayList<>();
 		scoreThList.add("序号");
-		for(int i=0;i<count;i++) {
+		for(int i=1;i<=eqtCount;i++) {
 			scoreThList.add(Constants.numGetChinese(i));
 		}
 		scoreThList.add("总分");
@@ -192,19 +194,53 @@ public class TestPaperController extends Logable{
 		
 		List<String> scoreList=new ArrayList<>();
 		scoreList.add("得分");
-		for(int i=0;i<count;i++) {
+		for(int i=1;i<=eqtCount;i++) {
 			scoreList.add("");
 		}
 		scoreList.add("");
 		resultMap.put("scoreList", scoreList);
 		
-		//resultMap.put("scoreTh", "题目");
-		//resultMap.put("score","得分");
-		
-		//题型-题目-答案
-		
 		
 		StringBuilder sb = new StringBuilder();
+		//所有题目
+		//试卷题型信息--已经按照题型排列顺序排列
+		List<ExamQuestiontype> eqtList= eqtService.allExamQuestiontypes(eId);
+		List<Map<String,Object>> quesList=new ArrayList<>();
+		List<Map<String, Object>> question=new ArrayList<>();
+		
+		ExamQuestiontype tempEqt;//试卷中题型
+		QuestionType tempQt;//题型实体
+		List<Questions> qList;//试题列表
+		for(int i=1;i<=eqtCount;i++) {
+			Map<String, Object> tempMap=new HashMap<>();
+			tempEqt=eqtList.get(i-1);//当前试题类型
+			tempQt=qtService.getQuestionTypeById(tempEqt.getQuestionTypeId().toString());
+			tempMap.put("fQId",Constants.numGetChinese(i));
+			tempMap.put("title",tempQt.gettTitle());
+			
+			qList=questionService.getQuestionsByEIdAndEQTId(eId, tempEqt.getQuestionTypeId());//当前试卷-题型下的题目（按照难易度排序）
+			for(int j=1;j<qList.size();j++) {
+				Map<String, Object> tempQuestionMap=new HashMap<>();
+				tempQuestionMap.put("sQId", j);
+				tempQuestionMap.put("content", qList.get(j).getqTitle());
+				question.add(tempQuestionMap);
+				//处理图片信息
+				sb.append(qList.get(j).getqTitle());
+			}
+			tempMap.put("question",question);
+			quesList.add(tempMap);
+		}
+		
+		resultMap.put("quesList", quesList);
+		
+		//题型-题目-答案
+//		contentMap.put("title","题目");
+//		contentMap.put("question", "选择的是");
+//		contentMap.put("answer", "答案");
+//		
+//		resultMap.put("content", contentMap);
+		
+	
 		
 
 		RichHtmlHandler handler = new RichHtmlHandler(sb.toString());
@@ -224,6 +260,9 @@ public class TestPaperController extends Logable{
 			}
 		}
 		
+		System.out.println("===========StringBuilder=========");
+		System.out.println(sb.toString());
+		
 		System.out.println("=========iamgebase64=========");
 		System.out.println(imagesBase64.toString());
 		
@@ -241,11 +280,6 @@ public class TestPaperController extends Logable{
 		System.out.println("==========title=================");
 		System.out.println(handler.getHandledDocBodyBlock());
 		
-		contentMap.put("title",handler.getHandledDocBodyBlock());
-		contentMap.put("question", "选择的是");
-		contentMap.put("answer", "答案");
-		resultMap.put("content", contentMap);
-		
 		resultMap.put("imagesXmlHrefString",imagesXmlHrefString);
 		resultMap.put("imagesBase64",imagesBase64);
 		
@@ -255,7 +289,7 @@ public class TestPaperController extends Logable{
 		
           try {
 			configuration.setDirectoryForTemplateLoading(new File(realPath));
-			File outFile=new File(realPath+"\\test.doc");
+			File outFile=new File(realPath+"\\"+eId+"test.doc");
 			
 			//以utf-8编码读取ftl文件
 			Template template=configuration.getTemplate("examTest.ftl","utf-8");
@@ -278,6 +312,101 @@ public class TestPaperController extends Logable{
 	public void test() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("<p><img alt=\"\" src=\"/upload/1514443556468655192.png\" style=\"height:40px; width:40px\" /></p>\r\n" + 
+				"\r\n" + 
+				"<ol>\r\n" + 
+				"	<li>/**&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;通过其后缀名判断其是否是图片&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;String&nbsp;后缀名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;合法返回true，不合法返回false&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;boolean&nbsp;isPic(String&nbsp;suffix){&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;suffix=suffix.toLowerCase();&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(suffix.equals(&quot;jpg&quot;)||suffix.equals(&quot;gif&quot;)||suffix.equals(&quot;jpeg&quot;)||suffix.equals(&quot;png&quot;))&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}else{&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</li>\r\n" + 
+				"</ol><p><img alt=\"\" src=\"/upload/1514443556468655192.png\" style=\"height:40px; width:40px\" /></p>\r\n" + 
+				"\r\n" + 
+				"<ol>\r\n" + 
+				"	<li>/**&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;通过其后缀名判断其是否是图片&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;String&nbsp;后缀名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;合法返回true，不合法返回false&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;boolean&nbsp;isPic(String&nbsp;suffix){&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;suffix=suffix.toLowerCase();&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(suffix.equals(&quot;jpg&quot;)||suffix.equals(&quot;gif&quot;)||suffix.equals(&quot;jpeg&quot;)||suffix.equals(&quot;png&quot;))&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}else{&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</li>\r\n" + 
+				"</ol><p><img alt=\"\" src=\"/upload/1514443556468655192.png\" style=\"height:40px; width:40px\" /></p>\r\n" + 
+				"\r\n" + 
+				"<ol>\r\n" + 
+				"	<li>/**&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;通过其后缀名判断其是否是图片&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;String&nbsp;后缀名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;合法返回true，不合法返回false&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;boolean&nbsp;isPic(String&nbsp;suffix){&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;suffix=suffix.toLowerCase();&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(suffix.equals(&quot;jpg&quot;)||suffix.equals(&quot;gif&quot;)||suffix.equals(&quot;jpeg&quot;)||suffix.equals(&quot;png&quot;))&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}else{&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</li>\r\n" + 
+				"</ol><p><img alt=\"\" src=\"/upload/1514443556468655192.png\" style=\"height:40px; width:40px\" /></p>\r\n" + 
+				"\r\n" + 
+				"<ol>\r\n" + 
+				"	<li>/**&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;通过其后缀名判断其是否是图片&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;String&nbsp;后缀名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;合法返回true，不合法返回false&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;boolean&nbsp;isPic(String&nbsp;suffix){&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;suffix=suffix.toLowerCase();&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(suffix.equals(&quot;jpg&quot;)||suffix.equals(&quot;gif&quot;)||suffix.equals(&quot;jpeg&quot;)||suffix.equals(&quot;png&quot;))&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}else{&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</li>\r\n" + 
+				"</ol><p><img alt=\"\" src=\"/upload/1514443556468655192.png\" style=\"height:40px; width:40px\" /></p>\r\n" + 
+				"\r\n" + 
+				"<ol>\r\n" + 
+				"	<li>/**&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;通过其后缀名判断其是否是图片&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@param&nbsp;String&nbsp;后缀名&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;@return&nbsp;合法返回true，不合法返回false&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;public&nbsp;boolean&nbsp;isPic(String&nbsp;suffix){&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;suffix=suffix.toLowerCase();&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(suffix.equals(&quot;jpg&quot;)||suffix.equals(&quot;gif&quot;)||suffix.equals(&quot;jpeg&quot;)||suffix.equals(&quot;png&quot;))&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}else{&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;</li>\r\n" + 
+				"	<li>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</li>\r\n" + 
+				"</ol><p><img alt=\"\" src=\"/upload/1514443556468655192.png\" style=\"height:40px; width:40px\" /></p>\r\n" + 
 				"\r\n" + 
 				"<ol>\r\n" + 
 				"	<li>/**&nbsp;</li>\r\n" + 
@@ -680,7 +809,7 @@ public class TestPaperController extends Logable{
 		System.out.println(resultUnit.getQuestionList().size()+"\t"+resultUnit.getKpCoverage()+"\t"+resultUnit.getDifficultyLevel()+"\t"+resultUnit.getAdapterDegree());
 		
 		
-		//将产生的最终试卷存入数据库
+		//将产生的最终试卷存入数据库---未完成
 		
 		
 		

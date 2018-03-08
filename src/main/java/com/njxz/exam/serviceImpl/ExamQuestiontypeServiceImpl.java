@@ -38,4 +38,9 @@ public class ExamQuestiontypeServiceImpl implements ExamQuestiontypeService{
 		return (int)eqtMapper.countByExample(example);
 	}
 
+	@Override
+	public List<ExamQuestiontype> allExamQuestiontypes(Long eId) {
+		return eqtMapper.allExamQuestiontypes(eId);
+	}
+
 }

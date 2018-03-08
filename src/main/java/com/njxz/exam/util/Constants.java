@@ -86,7 +86,7 @@ public class Constants {
 	
 	
 	
-	
+	//得到困难度的中文
 	public static String getDiffLevelStrCN(Double level) {
 		String levelCN="";
 		if((level-DIFFICULTY_LEVEL_VERYEASY)<0.0001&&(level-DIFFICULTY_LEVEL_VERYEASY)>-0.0001) {

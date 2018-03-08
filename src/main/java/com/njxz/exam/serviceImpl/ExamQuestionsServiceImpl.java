@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.njxz.exam.dao.ExamQuestionsMapper;
 import com.njxz.exam.modle.ExamQuestions;
+import com.njxz.exam.modle.Questions;
 import com.njxz.exam.service.ExamQuestionsService;
 
 @Service("examQuestionsService")
@@ -26,5 +27,5 @@ public class ExamQuestionsServiceImpl implements ExamQuestionsService{
 		// TODO Auto-generated method stub
 		return examQuestionsMapper.insertList(eqList);
 	}
-
+	
 }

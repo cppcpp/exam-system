@@ -191,6 +191,12 @@ public class QuestionServiceImpl implements QuestionService {
 		return mapper.countgetBy(qId);
 	}
 
+	@Override
+	public List<Questions> getQuestionsByEIdAndEQTId(Long eId, Long eqtId) {
+		// TODO Auto-generated method stub
+		return mapper.getQuestionsByEIdAndEQTId(eId, eqtId);
+	}
+
 	
 
 	

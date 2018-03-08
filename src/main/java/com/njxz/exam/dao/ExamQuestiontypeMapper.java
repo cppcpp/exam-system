@@ -29,4 +29,6 @@ public interface ExamQuestiontypeMapper {
     int updateByPrimaryKey(ExamQuestiontype record);
     
     int insertList(@Param("list")List<ExamQuestiontype> list);
+    
+    public List<ExamQuestiontype> allExamQuestiontypes(@Param("eId")Long eId);
 }

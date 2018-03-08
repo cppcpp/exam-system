@@ -29,4 +29,6 @@ public interface QuestionsMapper {
     int updateByPrimaryKey(Questions record);
     
     public int countgetBy(Long qId);
+    
+    public List<Questions> getQuestionsByEIdAndEQTId(@Param("eId")Long eId,@Param("eqtId") Long eqtId);
 }

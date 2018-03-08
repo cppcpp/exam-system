@@ -9,8 +9,8 @@ $(function(){
 	orderFlag=true,scoresFlag=true;
 	
 	//设置题型信息
-	$("#subject").change(function(){
-		sId=$("#subject").val()
+	$("#subjectSelect").change(function(){
+		sId=$("#subjectSelect").val()
 		getAllKps(sId);
 		getQuesCount1(sId);		
 	})

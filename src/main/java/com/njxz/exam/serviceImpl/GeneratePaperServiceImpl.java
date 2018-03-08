@@ -68,8 +68,10 @@ public class GeneratePaperServiceImpl implements GeneratePaperService {
 					List<Questions> oneTypeQuestions = getOneTypeQuestions(questionsDB, qtId, kpSet);
 
 					for (int i = 0; i < qtNum; i++) {
-						// 从0-（oneTypeQuestions.size()-1）中任意取一个数
-						index = random.nextInt(oneTypeQuestions.size()-1);
+						// 从[0,oneTypeQuestions.size()-1)中任意取一个数
+						//左含又不含
+						//如果right<=0抛出异常
+						index = random.nextInt(oneTypeQuestions.size());
 
 						questionsList.add(oneTypeQuestions.get(index));
 

@@ -28,4 +28,7 @@ public interface QuestionService {
 	//题目的抽取次数
 	public int countgetBy(Long qId);
 	
+	//根据试卷和题型取出试题，并根据难易度升序排序--和questions表外连接、
+	public List<Questions> getQuestionsByEIdAndEQTId(Long eId,Long eqtId);
+	
 }

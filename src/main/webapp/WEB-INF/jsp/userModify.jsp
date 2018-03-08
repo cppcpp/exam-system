@@ -124,7 +124,7 @@
 				 	<!-- <i class="icon-cogs"></i> -->
 					<img src="../../public/media/image/testPaper.png" /> 
 
-					<span class="title" style="color: #f0e8">试卷生成管理</span>
+					<span class="title" >试卷生成管理</span>
 
 					<span class="arrow "></span>
 
