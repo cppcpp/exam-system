@@ -45,7 +45,6 @@ import com.njxz.exam.modle.Result;
 import com.njxz.exam.modle.Subject;
 import com.njxz.exam.modle.TempExam;
 import com.njxz.exam.modle.User;
-import com.njxz.exam.service.ExamQuestionsService;
 import com.njxz.exam.service.ExamQuestiontypeService;
 import com.njxz.exam.service.ExamService;
 import com.njxz.exam.service.GeneratePaperService;
@@ -95,9 +94,6 @@ public class TestPaperController extends Logable{
 	
 	@Autowired
 	private ExamQuestiontypeService eqtService;
-	
-	@Autowired
-	private ExamQuestionsService eqService;
 	
 	// 抽取现有试卷
 	@RequestMapping(value = "/get", method = RequestMethod.GET)
@@ -154,7 +150,7 @@ public class TestPaperController extends Logable{
 			@PathVariable(name="eType",required=true)int eType) throws IOException {
 		String directoryName=Constants.WORD_TEMPLETE_DIRECTORY_NAME;
 		Map<String,Object> resultMap=new HashMap<>();
-		Map<String, String> contentMap=new HashMap<>();
+		//Map<String, String> contentMap=new HashMap<>();
 		
 		//模板存放的实际地址
 		String t=request.getSession().getServletContext().getRealPath("");
@@ -200,9 +196,7 @@ public class TestPaperController extends Logable{
 		scoreList.add("");
 		resultMap.put("scoreList", scoreList);
 		
-		
-		StringBuilder sb = new StringBuilder();
-		//所有题目
+		//写入所有题目
 		//试卷题型信息--已经按照题型排列顺序排列
 		List<ExamQuestiontype> eqtList= eqtService.allExamQuestiontypes(eId);
 		List<Map<String,Object>> quesList=new ArrayList<>();
@@ -211,8 +205,15 @@ public class TestPaperController extends Logable{
 		ExamQuestiontype tempEqt;//试卷中题型
 		QuestionType tempQt;//题型实体
 		List<Questions> qList;//试题列表
+		String tempContent;String tempImagesXmlHref;String tempImagesBase64;
+		Map<String, Object> tmepResultMapMap=null;
+		
+		StringBuilder sb = new StringBuilder();
+		StringBuilder imagesXmlHrefString=new StringBuilder();
+		StringBuilder imagesBase64=new StringBuilder();
+		
 		for(int i=1;i<=eqtCount;i++) {
-			Map<String, Object> tempMap=new HashMap<>();
+			Map<String, Object> tempMap = new HashMap<>();
 			tempEqt=eqtList.get(i-1);//当前试题类型
 			tempQt=qtService.getQuestionTypeById(tempEqt.getQuestionTypeId().toString());
 			tempMap.put("fQId",Constants.numGetChinese(i));
@@ -222,10 +223,27 @@ public class TestPaperController extends Logable{
 			for(int j=1;j<qList.size();j++) {
 				Map<String, Object> tempQuestionMap=new HashMap<>();
 				tempQuestionMap.put("sQId", j);
-				tempQuestionMap.put("content", qList.get(j).getqTitle());
+				//tempQuestionMap.put("content", qList.get(j).getqTitle());
 				question.add(tempQuestionMap);
-				//处理图片信息
+				//处理的图片信息（总）
 				sb.append(qList.get(j).getqTitle());
+				
+				StringBuilder sbTemp=new StringBuilder();
+				sbTemp.append(qList.get(j).getqTitle());
+				
+				//处理数据库中富文本
+				tmepResultMapMap=getHandleredInfo(sbTemp);
+				tempContent=tmepResultMapMap.get("docBodyBlock").toString();
+				tempImagesXmlHref=tmepResultMapMap.get("imagesXmlHrefString").toString();
+				tempImagesBase64=tmepResultMapMap.get("iamgebase64").toString();
+				
+				//所有的图片信息以及图片链接信息
+				imagesXmlHrefString.append(tempImagesXmlHref);
+				imagesBase64.append(tempImagesBase64);
+				
+				System.out.println("======tempContent==============");
+				System.out.println(tempContent);
+				tempQuestionMap.put("content",tempContent);
 			}
 			tempMap.put("question",question);
 			quesList.add(tempMap);
@@ -241,44 +259,10 @@ public class TestPaperController extends Logable{
 //		resultMap.put("content", contentMap);
 		
 	
-		
+		//Map<String, Object> handlerMap=getHandleredInfo(sb);
+		//String imagesBase64=handlerMap.get("iamgebase64").toString();
+		//String imagesXmlHrefString=handlerMap.get("imagesXmlHrefString").toString();
 
-		RichHtmlHandler handler = new RichHtmlHandler(sb.toString());
-
-		
-		handler.setDocSrcLocationPrex("file:///C:/C8FBA2D4");
-		handler.setDocSrcParent("examTest.files");
-		handler.setNextPartId("01D395FD.81B8E900");
-		
-		handler.handledHtml(request);
-		
-		StringBuilder imagesBase64=new StringBuilder();
-		if (handler.getDocBase64BlockResults() != null
-				&& handler.getDocBase64BlockResults().size() > 0) {
-			for (String item : handler.getDocBase64BlockResults()) {
-				imagesBase64.append(item);
-			}
-		}
-		
-		System.out.println("===========StringBuilder=========");
-		System.out.println(sb.toString());
-		
-		System.out.println("=========iamgebase64=========");
-		System.out.println(imagesBase64.toString());
-		
-		StringBuilder imagesXmlHrefString=new StringBuilder();
-		if (handler.getXmlImgRefs() != null
-				&& handler.getXmlImgRefs().size() > 0) {
-			for (String item : handler.getXmlImgRefs()) {
-				imagesXmlHrefString.append(item);
-			}
-		}
-		
-		System.out.println("============imagesXmlHrefString==============");
-		System.out.println(imagesXmlHrefString.toString());
-		
-		System.out.println("==========title=================");
-		System.out.println(handler.getHandledDocBodyBlock());
 		
 		resultMap.put("imagesXmlHrefString",imagesXmlHrefString);
 		resultMap.put("imagesBase64",imagesBase64);
@@ -306,6 +290,61 @@ public class TestPaperController extends Logable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	//得到处理过的富文本信息
+	public Map<String, Object> getHandleredInfo(StringBuilder sb){
+		Map<String, Object> resultMap=new HashMap<>();
+		
+		try {
+			RichHtmlHandler handler = new RichHtmlHandler(sb.toString());
+
+			handler.setDocSrcLocationPrex("file:///C:/C8FBA2D4");
+			handler.setDocSrcParent("examTest.files");
+			handler.setNextPartId("01D395FD.81B8E900");
+			
+			handler.handledHtml(request);
+			
+			StringBuilder imagesBase64=new StringBuilder();
+			if (handler.getDocBase64BlockResults() != null
+					&& handler.getDocBase64BlockResults().size() > 0) {
+				for (String item : handler.getDocBase64BlockResults()) {
+					imagesBase64.append(item);
+				}
+			}
+			
+			//System.out.println("===========StringBuilder=========");
+			//System.out.println(sb.toString());
+			
+			//System.out.println("=========iamgebase64（图片的Base64编码）=========");
+			//System.out.println(imagesBase64.toString());
+			
+			StringBuilder imagesXmlHrefString=new StringBuilder();
+			if (handler.getXmlImgRefs() != null
+					&& handler.getXmlImgRefs().size() > 0) {
+				for (String item : handler.getXmlImgRefs()) {
+					imagesXmlHrefString.append(item);
+				}
+			}
+			
+			//System.out.println("============imagesXmlHrefString（图片链接）==============");
+			//System.out.println(imagesXmlHrefString.toString());
+			
+			//System.out.println("==========docBodyBlock（处理过的主体部分）=================");
+			//System.out.println(handler.getHandledDocBodyBlock());
+			
+			//存入结果
+			resultMap.put("docBodyBlock", handler.getHandledDocBodyBlock());
+			resultMap.put("iamgebase64", imagesBase64.toString());
+			resultMap.put("imagesXmlHrefString", imagesXmlHrefString.toString());
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+		return resultMap;
 	}
 	
 	@RequestMapping(value="test")
@@ -445,10 +484,10 @@ public class TestPaperController extends Logable{
 			FileWriter fw=new FileWriter(file);
 			
 			
-			fw.write("======handledDocBody block==========\n");
+			fw.write("======handledDocBody block（主体信息）==========\n");
 			fw.write(handler.getHandledDocBodyBlock());
 			
-			fw.write("======handledBase64Block==========\n");
+			fw.write("======handledBase64Block（图片的base64编码）==========\n");
 			if (handler.getDocBase64BlockResults() != null
 					&& handler.getDocBase64BlockResults().size() > 0) {
 				for (String item : handler.getDocBase64BlockResults()) {
@@ -457,7 +496,7 @@ public class TestPaperController extends Logable{
 			}
 			if (handler.getXmlImgRefs() != null
 					&& handler.getXmlImgRefs().size() > 0) {
-				fw.write("======xmlimaHref==========\n");
+				fw.write("======xmlimaHref（从主体部分链接到Base64图片部分）==========\n");
 				for (String item : handler.getXmlImgRefs()) {
 					fw.write(item + "\n");
 				}
