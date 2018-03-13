@@ -325,4 +325,9 @@
   <select id="countgetBy" parameterType="java.lang.Long" resultType="java.lang.Integer">
   	select count(*) from questions q inner join exam_questions eq on q.q_id=eq.question_id where q.q_id=#{0}
   </select>
+  
+  <!-- 按照试卷Id和题型取出试题信息，并按照难易度排序 -->
+  <select id="getQuestionsByEIdAndEQTId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select * from questions q inner join exam_questions eq where q.q_id=eq.question_id and eq.exam_id=#{eId} and q.question_type_id=#{eqtId} order by q.q_difficulty_level
+  </select>
 </mapper>

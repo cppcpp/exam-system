@@ -25,6 +25,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,7 +36,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.njxz.exam.modle.AddException;
 import com.njxz.exam.modle.Exam;
 import com.njxz.exam.modle.ExamQuestiontype;
 import com.njxz.exam.modle.KnowledgePoints;
@@ -97,7 +97,7 @@ public class TestPaperController extends Logable{
 	
 	// 抽取现有试卷
 	@RequestMapping(value = "/get", method = RequestMethod.GET)
-	public ModelAndView getPaperPage(@RequestParam(value="pageNum",required = false, defaultValue = "1") Integer pageNum,
+	public ModelAndView getAllPaperPage(@RequestParam(value="pageNum",required = false, defaultValue = "1") Integer pageNum,
 			@RequestParam(value="pageSize",required = false, defaultValue = "10") Integer pageSize) {
 		ModelAndView mav=new ModelAndView();
 		List<Map<String, String>> examResultList=new ArrayList<>();
@@ -107,13 +107,15 @@ public class TestPaperController extends Logable{
 		User user=(User) session.getAttribute("user");
 		
 		PageHelper.startPage(pageNum, pageSize);
-		List<Exam> examList= examService.getExamByUserId(user);
+		List<Exam> examList= examService.getExamByUserId(user,pageNum, pageSize);
 		for(Exam exam:examList) {
 			Map<String, String> tempMap=new HashMap<>();
 			tempMap.put("eId", exam.geteId().toString());
 			tempMap.put("addTime", sdFormat.format(exam.geteAddTime()));
 			tempMap.put("eTitle", exam.geteTitle());
 			tempMap.put("eDifficulty", dformat.format(exam.geteDifficultyLevel()));
+			tempMap.put("eAddressA", exam.geteAddressA());
+			tempMap.put("eAddressB",exam.geteAddressB());
 			//A卷B卷
 			if(examService.isHasExamType((byte)0)) {
 				tempMap.put("examTypeA", "A卷");
@@ -134,9 +136,9 @@ public class TestPaperController extends Logable{
 			examResultList.add(tempMap);
 		}
 		
-		PageInfo<Exam> page=new PageInfo<Exam>(examList);
+		PageInfo<Exam> pageInfo=new PageInfo<Exam>(examList);
 		
-		mav.addObject("page", page);
+		mav.addObject("page", pageInfo);
 		mav.addObject("examList", examResultList);
 		
 		mav.setViewName("testPaperGet");
@@ -145,9 +147,9 @@ public class TestPaperController extends Logable{
 	}
 
 	//根据试卷Id生成word
-	@RequestMapping(value="/exportWord/{eId}/{eType}",method=RequestMethod.GET)
-	public void exportWord(@PathVariable(name="eId",required=true)Long eId,
-			@PathVariable(name="eType",required=true)int eType) throws IOException {
+	//@RequestMapping(value="/exportWord/{eId}/{eType}",method=RequestMethod.GET)
+	//return  true：生成word成功    false：失败
+	public boolean exportWord(Long eId,int eType) throws IOException, TemplateException {
 		String directoryName=Constants.WORD_TEMPLETE_DIRECTORY_NAME;
 		Map<String,Object> resultMap=new HashMap<>();
 		//Map<String, String> contentMap=new HashMap<>();
@@ -271,25 +273,35 @@ public class TestPaperController extends Logable{
 		Configuration configuration=new Configuration();
 		configuration.setDefaultEncoding("utf-8");
 		
-          try {
-			configuration.setDirectoryForTemplateLoading(new File(realPath));
-			File outFile=new File(realPath+"\\"+eId+"test.doc");
-			
-			//以utf-8编码读取ftl文件
-			Template template=configuration.getTemplate("examTest.ftl","utf-8");
-			
-			Writer out=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),"utf-8"),10240);
-			
-			template.process(resultMap, out);
-			out.close();
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (TemplateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+        
+		configuration.setDirectoryForTemplateLoading(new File(realPath));
+		File outFile=new File(realPath+"\\"+eId+"test.doc");
+		
+		//以utf-8编码读取ftl文件
+		Template template=configuration.getTemplate("examTest.ftl","utf-8");
+		
+		Writer out=new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile),"utf-8"),10240);
+		
+		template.process(resultMap, out);
+		out.close();
+		
+		//将生成的word地址存入Exam中
+		if(eType==0) {
+			exam.seteAddressA("http://localhost:8080/wordTemplete/"+eId+"test.doc");
+			exam.seteAddressB("");
 		}
+		if(eType==1) {
+			exam.seteAddressB("http://localhost:8080/wordTemplete/"+eId+"test.doc");
+			exam.seteAddressA("");
+		}
+		
+		//更新
+		if( examService.updateByPrimaryKey(exam)==1) {
+			return true;
+		}else {
+			return false;
+		}
+			
 	}
 	
 	//得到处理过的富文本信息
@@ -855,13 +867,14 @@ public class TestPaperController extends Logable{
 		return result;
 	}
 	
-	//手动生成试卷
+	//手动生成试卷---试卷都是A卷
 	@RequestMapping("/generatePaperSelf")
 	@ResponseBody
-	public Result generatePaperSelf(@RequestBody Map<String, Object> request) throws AddException{
+	public Result generatePaperSelf(@RequestBody Map<String, Object> request){
 		Result result=new Result();
 		List<Long> qIdList=new ArrayList<>();//所有试题Id
 		double paperDifficutty=0;Questions tempQuestions;
+		Long eId=StringUtil.seqGenerate();
 		
 		List<Map<String, Object>> qtList=(List<Map<String, Object>>) request.get("qtInfo");//题型
 		List<Object> qIdListTemp=(List<Object>) request.get("qIds"); //临时存放所有题目Id
@@ -885,7 +898,7 @@ public class TestPaperController extends Logable{
 		User user= (User) session.getAttribute("user");
 		//将试卷信息存入数据库
 		try {
-			if(!examService.inToDB(user.getuId(),paperName,paperTotalScore,paperDifficutty,(byte)0,sId,qIdList,qtList)) {
+			if(!examService.inToDB(eId,user.getuId(),paperName,paperTotalScore,paperDifficutty,(byte)0,sId,qIdList,qtList)) {
 				error("服务器崩溃，添加试卷信息失败，请重新尝试");
 				result.setRtnMessage("服务器崩溃，添加试卷信息失败，请重新尝试");
 				result.setRtnCode("-9999");
@@ -900,11 +913,43 @@ public class TestPaperController extends Logable{
 			return result ;
 		}
 		
+		//生成word文档
+		try {
+			 if(!exportWord(eId,0)) {
+				 error("服务器崩溃，生成word格式失败，请重新尝试");
+				 result.setRtnMessage("服务器崩溃，生成word格式失败，请重新尝试");
+				 result.setRtnCode("-9999");
+				 return result;
+			 }
+			 
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			error("服务器崩溃，生成试卷word格式失败，请重新尝试");
+			result.setRtnMessage("服务器崩溃，生成word格式失败，请重新尝试");
+			result.setRtnCode("-9999");
+			return result;
+		} catch (TemplateException e) {
+			// TODO Auto-generated catch block
+			error("服务器崩溃，生成试卷word格式失败，请重新尝试");
+			result.setRtnMessage("服务器崩溃，生成word格式失败，请重新尝试");
+			result.setRtnCode("-9999");
+			return result;
+		}
+		
 		result.setRtnMessage("试卷生成成功，前往下载试卷");
 		result.setRtnCode("0");
 		return result ;
 	}
 	
+	//删除试卷--exam--exam_questiontype--exam_questions
+	@RequestMapping(value="/deleteExam/{eId}",method=RequestMethod.GET)
+	public String deleteExam(@PathVariable("eId")Long eId,Model model) {
+		if(examService.deleteExamByExamId(eId)==false) {
+			model.addAttribute("deleteExamError", "删除试卷信息失败");
+		}
+		
+		return "redirect:/testPaper/get";
+	}
 	
 	//展示种群个体信息
 	public void showUnit(List<TempExam> unitList) {

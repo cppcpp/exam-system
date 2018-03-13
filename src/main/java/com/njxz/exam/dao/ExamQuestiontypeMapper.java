@@ -30,5 +30,7 @@ public interface ExamQuestiontypeMapper {
     
     int insertList(@Param("list")List<ExamQuestiontype> list);
     
-    public List<ExamQuestiontype> allExamQuestiontypes(@Param("eId")Long eId);
+    List<ExamQuestiontype> allExamQuestiontypes(@Param("eId")Long eId);
+    
+    int deleteExamQuestiontypesByEId(@Param("eId")Long eId);
 }

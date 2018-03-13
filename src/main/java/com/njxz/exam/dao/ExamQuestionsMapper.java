@@ -29,4 +29,6 @@ public interface ExamQuestionsMapper {
     int updateByPrimaryKey(ExamQuestions record);
     
     int insertList(@Param("list")List<ExamQuestions> list);
+    
+    int deleteExamQuestionsByEId(@Param("eId")Long eId);
 }

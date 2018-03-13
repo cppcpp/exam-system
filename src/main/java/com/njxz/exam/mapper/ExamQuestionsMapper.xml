@@ -205,4 +205,9 @@
     	(#{item.examId,jdbcType=BIGINT},#{item.examType,jdbcType=TINYINT},#{item.questionId,jdbcType=BIGINT})
     </foreach>
   </insert>
+  
+  <!-- 通过试卷Id删除多条 -->
+  <delete id="deleteExamQuestionsByEId" parameterType="java.lang.Long">
+  	delete from exam_questions where exam_id=#{eId}
+  </delete>
 </mapper>

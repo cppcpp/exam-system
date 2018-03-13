@@ -8,6 +8,8 @@
     <result column="e_add_time" jdbcType="TIMESTAMP" property="eAddTime" />
     <result column="e_title" jdbcType="VARCHAR" property="eTitle" />
     <result column="e_difficulty_level" jdbcType="DOUBLE" property="eDifficultyLevel" />
+    <result column="e_address_a" jdbcType="VARCHAR" property="eAddressA" />
+    <result column="e_address_b" jdbcType="VARCHAR" property="eAddressB" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -68,7 +70,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    e_id, subject_id, user_id, e_add_time, e_title, e_difficulty_level
+    e_id, subject_id, user_id, e_add_time, e_title, e_difficulty_level, e_address_a, 
+    e_address_b
   </sql>
   <select id="selectByExample" parameterType="com.njxz.exam.modle.ExamExample" resultMap="BaseResultMap">
     select
@@ -102,11 +105,11 @@
   </delete>
   <insert id="insert" parameterType="com.njxz.exam.modle.Exam">
     insert into exam (e_id, subject_id, user_id, 
-      e_add_time, e_title, e_difficulty_level
-      )
+      e_add_time, e_title, e_difficulty_level, 
+      e_address_a, e_address_b)
     values (#{eId,jdbcType=BIGINT}, #{subjectId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, 
-      #{eAddTime,jdbcType=TIMESTAMP}, #{eTitle,jdbcType=VARCHAR}, #{eDifficultyLevel,jdbcType=DOUBLE}
-      )
+      #{eAddTime,jdbcType=TIMESTAMP}, #{eTitle,jdbcType=VARCHAR}, #{eDifficultyLevel,jdbcType=DOUBLE}, 
+      #{eAddressA,jdbcType=VARCHAR}, #{eAddressB,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.njxz.exam.modle.Exam">
     insert into exam
@@ -129,6 +132,12 @@
       <if test="eDifficultyLevel != null">
         e_difficulty_level,
       </if>
+	<if test="eAddressA != null">
+        e_address_a,
+      </if>
+      <if test="eAddressB != null">
+        e_address_b,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="eId != null">
@@ -149,6 +158,12 @@
       <if test="eDifficultyLevel != null">
         #{eDifficultyLevel,jdbcType=DOUBLE},
       </if>
+      <if test="eAddressA != null">
+        #{eAddressA,jdbcType=VARCHAR},
+      </if>
+      <if test="eAddressB != null">
+        #{eAddressB,jdbcType=VARCHAR},      
+	</if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.njxz.exam.modle.ExamExample" resultType="java.lang.Long">
@@ -178,6 +193,12 @@
       <if test="record.eDifficultyLevel != null">
         e_difficulty_level = #{record.eDifficultyLevel,jdbcType=DOUBLE},
       </if>
+	<if test="record.eAddressA != null">
+        e_address_a = #{record.eAddressA,jdbcType=VARCHAR},
+      </if>
+      <if test="record.eAddressB != null">
+        e_address_b = #{record.eAddressB,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -190,7 +211,9 @@
       user_id = #{record.userId,jdbcType=BIGINT},
       e_add_time = #{record.eAddTime,jdbcType=TIMESTAMP},
       e_title = #{record.eTitle,jdbcType=VARCHAR},
-      e_difficulty_level = #{record.eDifficultyLevel,jdbcType=DOUBLE}
+      e_difficulty_level = #{record.eDifficultyLevel,jdbcType=DOUBLE},
+      e_address_a = #{record.eAddressA,jdbcType=VARCHAR},
+      e_address_b = #{record.eAddressB,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -213,6 +236,12 @@
       <if test="eDifficultyLevel != null">
         e_difficulty_level = #{eDifficultyLevel,jdbcType=DOUBLE},
       </if>
+	<if test="eAddressA != null">
+        e_address_a = #{eAddressA,jdbcType=VARCHAR},
+      </if>
+      <if test="eAddressB != null">
+        e_address_b = #{eAddressB,jdbcType=VARCHAR},
+      </if>
     </set>
     where e_id = #{eId,jdbcType=BIGINT}
   </update>
@@ -222,7 +251,9 @@
       user_id = #{userId,jdbcType=BIGINT},
       e_add_time = #{eAddTime,jdbcType=TIMESTAMP},
       e_title = #{eTitle,jdbcType=VARCHAR},
-      e_difficulty_level = #{eDifficultyLevel,jdbcType=DOUBLE}
+      e_difficulty_level = #{eDifficultyLevel,jdbcType=DOUBLE},
+      e_address_a = #{eAddressA,jdbcType=VARCHAR},
+      e_address_b = #{eAddressB,jdbcType=VARCHAR}
     where e_id = #{eId,jdbcType=BIGINT}
   </update>
   

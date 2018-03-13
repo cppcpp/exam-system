@@ -43,4 +43,9 @@ public class ExamQuestiontypeServiceImpl implements ExamQuestiontypeService{
 		return eqtMapper.allExamQuestiontypes(eId);
 	}
 
+	@Override
+	public int deleteExamQuestiontypesByEId(Long eId) {
+		return eqtMapper.deleteExamQuestiontypesByEId(eId);
+	}
+
 }

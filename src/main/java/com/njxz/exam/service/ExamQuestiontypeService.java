@@ -17,4 +17,7 @@ public interface ExamQuestiontypeService {
 	//取出试卷所有题型--按照type_sort升序排列
 	public List<ExamQuestiontype> allExamQuestiontypes(Long eId);
 	
+	//通过试卷id删除试卷的题型
+	int deleteExamQuestiontypesByEId(Long eId);
+	
 }

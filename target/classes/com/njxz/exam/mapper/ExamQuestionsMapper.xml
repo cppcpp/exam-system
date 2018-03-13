@@ -202,7 +202,12 @@
     </selectKey> 
     insert into exam_questions(exam_id,exam_type,question_id) values
     <foreach collection="list" item="item" index="index" separator=","> 
-    	(#{item.examId,jdbcType=BIGINT},#{item.questionId,jdbcType=BIGINT},#{item.examType,jdbcType=TINYINT})
+    	(#{item.examId,jdbcType=BIGINT},#{item.examType,jdbcType=TINYINT},#{item.questionId,jdbcType=BIGINT})
     </foreach>
   </insert>
+  
+  <!-- 通过试卷Id删除多条 -->
+  <delete id="deleteExamQuestionsByEId" parameterType="java.lang.Long">
+  	delete from exam_questions where exam_id=#{eId}
+  </delete>
 </mapper>

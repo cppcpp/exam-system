@@ -5,12 +5,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.aspectj.util.LangUtil.ProcessController.Thrown;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.github.pagehelper.PageHelper;
 import com.njxz.exam.dao.ExamMapper;
-import com.njxz.exam.modle.AddException;
+import com.njxz.exam.modle.BasicException;
 import com.njxz.exam.modle.Exam;
 import com.njxz.exam.modle.ExamExample;
 import com.njxz.exam.modle.ExamExample.Criteria;
@@ -25,6 +27,7 @@ import com.njxz.exam.service.ExamService;
 import com.njxz.exam.service.SubjectService;
 import com.njxz.exam.service.UserSubjectService;
 import com.njxz.exam.util.StringUtil;
+import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 
 @Service("examService")
 public class ExamServiceImpl implements ExamService{
@@ -52,8 +55,8 @@ public class ExamServiceImpl implements ExamService{
 	@Override
 	@Transactional
 	//试卷信息存入数据库---exam,exam_questions,exam_questiontype
-	public boolean inToDB(Long uId, String paperName,int paperTotalScore, double paperDifficutty, Byte eStatus,
-			Long sId, List<Long> qIdList, List<Map<String, Object>> qtList) throws AddException{
+	public boolean inToDB(Long eId,Long uId, String paperName,int paperTotalScore, double paperDifficutty, Byte eStatus,
+			Long sId, List<Long> qIdList, List<Map<String, Object>> qtList) throws BasicException{
 		int count1;
 		ExamQuestions tempExamQuestions;
 		List<ExamQuestions> eqList=new ArrayList<>();
@@ -61,11 +64,11 @@ public class ExamServiceImpl implements ExamService{
 		ExamQuestiontype tempExamQuestiontype;
 		Long qtId;Short questionNum;Short typeScore;Byte typeSort;
 		//新建试卷
-		Exam exam=new Exam(StringUtil.seqGenerate(),sId,uId, new Date(), paperName, paperDifficutty);
+		Exam exam=new Exam(eId,sId,uId, new Date(), paperName, paperDifficutty);
 		int count= add(exam);
 		
 		if(count!=1) {
-			throw new AddException("exam添加失败");
+			throw new BasicException("exam添加失败");
 		}
 		
 		//存入examQuestions
@@ -76,7 +79,7 @@ public class ExamServiceImpl implements ExamService{
 		
 		count1=eqService.add(eqList);
 		if(count1<0) {
-			throw new AddException("examQuestions添加失败");
+			throw new BasicException("examQuestions添加失败");
 		}
 		//存入examQuestiontype
 		for(Map<String, Object> qtMap:qtList) {
@@ -90,13 +93,13 @@ public class ExamServiceImpl implements ExamService{
 		
 		count1=eqtService.add(eqtList);
 		if(count1<0) {
-			throw new AddException("examQuestions添加失败");
+			throw new BasicException("examQuestions添加失败");
 		}
 		return true;
 	}
 
 	//根据用户Id抽取试卷
-	public List<Exam> getExamByUserId(User user) {
+	public List<Exam> getExamByUserId(User user,int pageNum,int pageSize) {
 		List<UserSubject> listUS = null;
 		List<Subject> listS=new ArrayList<>();
 		List<Long> sIdList = new ArrayList<Long>();//所有科目Id
@@ -122,6 +125,7 @@ public class ExamServiceImpl implements ExamService{
 		Criteria criteria=examExample.createCriteria();
 		criteria.andSubjectIdIn(sIdList);
 		
+		PageHelper.startPage(pageNum, pageSize);
 		return examMapper.selectByExample(examExample);
 	}
 
@@ -138,6 +142,36 @@ public class ExamServiceImpl implements ExamService{
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public int updateByPrimaryKey(Exam exam) {
+		return examMapper.updateByPrimaryKey(exam);
+	}
+
+	//删除试卷信息--exam,exam_questiosns,exam_questiontype
+	@Override
+	@Transactional
+	public boolean deleteExamByExamId(Long examId) {
+		try {
+			//删除试卷题型信息
+			if(eqtService.deleteExamQuestiontypesByEId(examId)<1) {
+				throw new BasicException("根据试卷id删除试卷题型信息失败");
+			}
+			//删除试卷题目信息
+			if(eqService.deleteExamQuestionsByEId(examId)<1) {
+				throw new BasicException("根据试卷id删除试卷题目失败");
+			}
+			//删除试卷实体
+			if(examMapper.deleteByPrimaryKey(examId)!=1) {
+				throw new BasicException("根据试卷id删除试卷");
+			}
+			
+		}catch (Exception e) {
+			throw new BasicException("删除试卷信息异常");
+		}
+		
+		return true;
 	}
 
 

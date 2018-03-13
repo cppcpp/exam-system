@@ -237,4 +237,14 @@
     	(#{item.examId,jdbcType=BIGINT},#{item.questionTypeId,jdbcType=BIGINT},#{item.questionNum,jdbcType=SMALLINT},#{item.typeScore,jdbcType=SMALLINT},#{item.typeSort,jdbcType=TINYINT})
     </foreach>
   </insert>
+  
+  <!-- 选择某试卷的所有题型，按照升序排列 -->
+  <select id="allExamQuestiontypes" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  	select * from exam_questiontype eqt where eqt.exam_id=#{eId,jdbcType=BIGINT} ORDER BY eqt.type_sort asc
+  </select>
+  
+  <delete id="deleteExamQuestiontypesByEId" parameterType="java.lang.Long">
+  	delete from exam_questiontype where exam_id=#{eId}
+  </delete>
+  
 </mapper>

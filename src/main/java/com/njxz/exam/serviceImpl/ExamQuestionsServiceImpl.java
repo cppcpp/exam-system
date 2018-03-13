@@ -27,5 +27,11 @@ public class ExamQuestionsServiceImpl implements ExamQuestionsService{
 		// TODO Auto-generated method stub
 		return examQuestionsMapper.insertList(eqList);
 	}
+
+	@Override
+	public int deleteExamQuestionsByEId(Long eId) {
+		// TODO Auto-generated method stub
+		return examQuestionsMapper.deleteExamQuestionsByEId(eId);
+	}
 	
 }

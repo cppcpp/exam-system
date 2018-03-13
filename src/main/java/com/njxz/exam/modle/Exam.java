@@ -14,6 +14,10 @@ public class Exam {
     private String eTitle;
 
     private Double eDifficultyLevel;
+
+    private String eAddressA;
+
+    private String eAddressB;
     
     public Exam() {}
     
@@ -26,7 +30,7 @@ public class Exam {
 		this.eDifficultyLevel = eDifficultyLevel;
 	}
 
-	public Long geteId() {
+    public Long geteId() {
         return eId;
     }
 
@@ -72,5 +76,21 @@ public class Exam {
 
     public void seteDifficultyLevel(Double eDifficultyLevel) {
         this.eDifficultyLevel = eDifficultyLevel;
+    }
+
+    public String geteAddressA() {
+        return eAddressA;
+    }
+
+    public void seteAddressA(String eAddressA) {
+        this.eAddressA = eAddressA == null ? null : eAddressA.trim();
+    }
+
+    public String geteAddressB() {
+        return eAddressB;
+    }
+
+    public void seteAddressB(String eAddressB) {
+        this.eAddressB = eAddressB == null ? null : eAddressB.trim();
     }
 }

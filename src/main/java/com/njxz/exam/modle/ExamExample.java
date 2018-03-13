@@ -474,6 +474,146 @@ public class ExamExample {
             addCriterion("e_difficulty_level not between", value1, value2, "eDifficultyLevel");
             return (Criteria) this;
         }
+
+        public Criteria andEAddressAIsNull() {
+            addCriterion("e_address_a is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressAIsNotNull() {
+            addCriterion("e_address_a is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressAEqualTo(String value) {
+            addCriterion("e_address_a =", value, "eAddressA");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressANotEqualTo(String value) {
+            addCriterion("e_address_a <>", value, "eAddressA");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressAGreaterThan(String value) {
+            addCriterion("e_address_a >", value, "eAddressA");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressAGreaterThanOrEqualTo(String value) {
+            addCriterion("e_address_a >=", value, "eAddressA");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressALessThan(String value) {
+            addCriterion("e_address_a <", value, "eAddressA");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressALessThanOrEqualTo(String value) {
+            addCriterion("e_address_a <=", value, "eAddressA");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressALike(String value) {
+            addCriterion("e_address_a like", value, "eAddressA");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressANotLike(String value) {
+            addCriterion("e_address_a not like", value, "eAddressA");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressAIn(List<String> values) {
+            addCriterion("e_address_a in", values, "eAddressA");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressANotIn(List<String> values) {
+            addCriterion("e_address_a not in", values, "eAddressA");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressABetween(String value1, String value2) {
+            addCriterion("e_address_a between", value1, value2, "eAddressA");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressANotBetween(String value1, String value2) {
+            addCriterion("e_address_a not between", value1, value2, "eAddressA");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressBIsNull() {
+            addCriterion("e_address_b is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressBIsNotNull() {
+            addCriterion("e_address_b is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressBEqualTo(String value) {
+            addCriterion("e_address_b =", value, "eAddressB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressBNotEqualTo(String value) {
+            addCriterion("e_address_b <>", value, "eAddressB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressBGreaterThan(String value) {
+            addCriterion("e_address_b >", value, "eAddressB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressBGreaterThanOrEqualTo(String value) {
+            addCriterion("e_address_b >=", value, "eAddressB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressBLessThan(String value) {
+            addCriterion("e_address_b <", value, "eAddressB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressBLessThanOrEqualTo(String value) {
+            addCriterion("e_address_b <=", value, "eAddressB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressBLike(String value) {
+            addCriterion("e_address_b like", value, "eAddressB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressBNotLike(String value) {
+            addCriterion("e_address_b not like", value, "eAddressB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressBIn(List<String> values) {
+            addCriterion("e_address_b in", values, "eAddressB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressBNotIn(List<String> values) {
+            addCriterion("e_address_b not in", values, "eAddressB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressBBetween(String value1, String value2) {
+            addCriterion("e_address_b between", value1, value2, "eAddressB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEAddressBNotBetween(String value1, String value2) {
+            addCriterion("e_address_b not between", value1, value2, "eAddressB");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

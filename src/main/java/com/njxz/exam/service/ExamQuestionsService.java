@@ -10,4 +10,6 @@ public interface ExamQuestionsService {
 	//添加多条
 	public int add(List<ExamQuestions> eqList);
 	
+	//通过试卷id删除试卷中的题目信息
+	int deleteExamQuestionsByEId(Long eId);
 }

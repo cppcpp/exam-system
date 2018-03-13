@@ -444,7 +444,7 @@
 					<div class="span12">
 						<table class="table table-striped table-bordered" id="table">
 							<tr>
-								<th colspan="6">试卷列表</th>
+								<th colspan="7">试卷列表</th>
 							</tr>
 							<tr>
 								<td>试卷标题</td>
@@ -452,6 +452,7 @@
 								<td>科目</td>
 								<td>生成者</td>
 								<td>生成时间</td>
+								<td>下载</td>
 								<td>操作</td>
 							</tr>
 							<c:if test="${examList!=null}">
@@ -462,11 +463,22 @@
 										<td>${exam.subjectTitle}</td>
 										<td>${exam.userName}</td>
 										<td>${exam.addTime}</td>
-										<td><a href=''>下载</a></td>
+										<td>
+										<c:if test="${exam.examTypeA!=null}">
+											<a href='${exam.eAddressA}'>A卷</a>
+										</c:if>
+										<c:if test="${exam.examTypeB!=null}">
+											<a href='${exam.eAddressB}'>B卷</a>
+										</c:if>
+										</td>
+										<td><a href="">修改</a>|<a href="deleteExam/${exam.eId}">删除</a></td>
 									</tr>
 								</c:forEach>
 							</c:if>
-						</table>						
+						</table>		
+						<a href="get?pageNum=${page.firstPage}">首页</a>|<a href="get?pageNum=${page.prePage}">上一页</a>|<a href="get?pageNum=${page.nextPage}">下一页</a>|<a href="get?pageNum=${page.lastPage}">尾页</a></br>
+		共<c:out value="${page.total}"/>条数据，当前为第 <c:out value="${page.pageNum}"/> 页，共  <c:out value="${page.pages}"/>页
+									
 	
 					</div><!-- 主体部分结束 -->
 
