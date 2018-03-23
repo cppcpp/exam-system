@@ -61,6 +61,7 @@ public class HomeController extends Logable {
 			return "login";
 		}
 
+		String a=StringUtil.EncoderByMd5(user.getPassword());
 		User findUser = userService.findUser(user.getUsername(), StringUtil.EncoderByMd5(user.getPassword()));
 		System.out.println("----------user:--------------------------------" + findUser);
 

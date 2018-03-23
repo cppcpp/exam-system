@@ -41,8 +41,7 @@
 	<!-- <mvc:resources location="/public/" mapping="/public/**"/> -->
 
 	<!-- ViewResolver把逻辑视图渲染成具体的View -->
-	<bean
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<bean id="myViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<!-- 将视图解析成JstlView,而不是InternalResourceView 
 		确保JSTL获取Local和Spring的信息资源-->
 		<property name="viewClass"
