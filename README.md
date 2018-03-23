@@ -23,11 +23,14 @@
          * 数据库管理，包括备份数据库功能。
  #### 项目中文件说明
  ###### 开发关键字：win10 eclipse mysql Tomcat SSM Maven Hibernate validation log4j CKEditor4 Freemarker 遗传算法
-      * 数据库位于根目录file文件夹下，此外为毕设参考文档
-      * 其余目录结构均为eclipse生成maven项目的结构
-      * spring配置文件地址：根目录/WEB-INF/config/spring/*
-      * 其余配置文件地址：src/main/resources
-####页面展示
+         * 数据库位于根目录file文件夹下，此外为毕设参考文档
+         * 其余目录结构均为eclipse生成maven项目的目录结构
+         * spring配置文件地址：根目录/WEB-INF/config/spring/
+         * 其余配置文件地址：src/main/resources/
+#### 部分页面展示
+![登录页面](https://github.com/cppcpp/exam-system/tree/master/src/main/webapp/public/images/1.png)
+![自动生成试卷页面](https://github.com/cppcpp/exam-system/tree/master/src/main/webapp/public/images/2.png)
+![操作试卷页面](https://github.com/cppcpp/exam-system/tree/master/src/main/webapp/public/images/3.png)
 
 
 
