@@ -22,7 +22,13 @@
          * 其中有系统设置模块，包括查看系统设置信息和设置系统设置信息；公告管理，包括查看公告信息和 设置公告信息。当然，公告信息是任何人都可以看到的；
          * 数据库管理，包括备份数据库功能。
  #### 项目中文件说明
-     `开发关键字：win10 eclipse mysql Tomcat SSM Maven Hibernate validation log4j CKEditor4 Freemarker 遗传算法`
+ ###### 开发关键字：win10 eclipse mysql Tomcat SSM Maven Hibernate validation log4j CKEditor4 Freemarker 遗传算法
       * 数据库位于根目录file文件夹下，此外为毕设参考文档
       * 其余目录结构均为eclipse生成maven项目的结构
+      * spring配置文件地址：根目录/WEB-INF/config/spring/*
+      * 其余配置文件地址：src/main/resources
+####页面展示
+
+
+
  
