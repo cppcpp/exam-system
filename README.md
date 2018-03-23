@@ -28,9 +28,9 @@
          * spring配置文件地址：根目录/WEB-INF/config/spring/
          * 其余配置文件地址：src/main/resources/
 #### 部分页面展示
-![登录页面](https://github.com/cppcpp/exam-system/tree/master/src/main/webapp/public/images/1.png)
-![自动生成试卷页面](https://github.com/cppcpp/exam-system/tree/master/src/main/webapp/public/images/2.png)
-![操作试卷页面](https://github.com/cppcpp/exam-system/tree/master/src/main/webapp/public/images/3.png)
+![登录页面](https://github.com/cppcpp/exam-system/raw/master/src/main/webapp/public/images/1.png)
+![自动生成试卷页面](https://github.com/cppcpp/exam-system/raw/master/src/main/webapp/public/images/2.png)
+![操作试卷页面](https://github.com/cppcpp/exam-system/raw/master/src/main/webapp/public/images/3.png)
 
 
 
