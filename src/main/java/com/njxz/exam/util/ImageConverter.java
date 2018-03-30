@@ -1,7 +1,6 @@
 package com.njxz.exam.util;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,7 +13,7 @@ import org.apache.commons.codec.binary.Base64;
 
 public class ImageConverter {
 	
-	//½«×Ö·û´®×ª³É10½øÖÆµÄasciiÂë(.mht²ÉÓÃ3Dus-ascii)
+	//å°†å­—ç¬¦ä¸²è½¬æˆ10è¿›åˆ¶çš„asciiç (.mhté‡‡ç”¨3Dus-ascii)
 	public static String string2ASCII(String string){
 		if(string==null) {
 			return null;
@@ -37,35 +36,42 @@ public class ImageConverter {
 		return asciiString.toString();
 	}
 	
-	//Í¼Æ¬×ª»»³ÉBase64±àÂë
+	//å›¾ç‰‡è½¬æ¢æˆBase64ç¼–ç 
 	public static String imageToBase64(String imgSrc) throws IOException{
-		//ÅĞ¶ÏÎÄ¼şÊÇ·ñ´æÔÚ
+		FileInputStream input=null;
+		//åˆ¤æ–­æ–‡ä»¶æ˜¯å¦å­˜åœ¨
 		File file=new File(imgSrc);
 		if(!file.exists()) {
-			throw new FileNotFoundException(imgSrc+"ÎÄ¼ş²»´æÔÚ");
+			throw new FileNotFoundException(imgSrc+"æ–‡ä»¶ä¸å­˜åœ¨");
 		}
 		
 		StringBuilder pictureBuffer=new StringBuilder();
 		
-		FileInputStream input=new FileInputStream(file);
-		//ByteArrayOutputStream out=new ByteArrayOutputStream();
+		//try--finallyå¼‚å¸¸å…³é—­æ–‡ä»¶
+		try {
+			input=new FileInputStream(file);
+			//ByteArrayOutputStream out=new ByteArrayOutputStream();
+			
+			//è¯»å–æ–‡ä»¶
+			/*byte[] temp=new byte[1024];
+			for(int len=input.read(temp);len!=-1;len=input.read(temp)) {
+				out.write(temp,0,len);
+			}*/
+			byte[] data=new byte[input.available()];
+			input.read(data);
+			//input.close();
+			
+			Base64 base64=new Base64();
+			pictureBuffer.append(new String(base64.encode(data)));
+		}finally {
+			input.close();
+		}
 		
-		//¶ÁÈ¡ÎÄ¼ş
-		/*byte[] temp=new byte[1024];
-		for(int len=input.read(temp);len!=-1;len=input.read(temp)) {
-			out.write(temp,0,len);
-		}*/
-		byte[] data=new byte[input.available()];
-		input.read(data);
-		input.close();
-		
-		Base64 base64=new Base64();
-		pictureBuffer.append(new String(base64.encode(data)));
 		
 		return pictureBuffer.toString();
 	}
 	
-	//Í¼Æ¬ĞÅÏ¢×ª³ÉwordÎÄµµĞÅÏ¢
+	//å›¾ç‰‡ä¿¡æ¯è½¬æˆwordæ–‡æ¡£ä¿¡æ¯
 	public static String toDocBodyBlock(
 			String imageFilePath,
 			String imageFielShortName,
@@ -74,12 +80,12 @@ public class ImageConverter {
 			String imageStyle,
 			String srcLocationShortName){
 		
-		//shapId--<v:shap>±êÇ©id
-		//mhtÎÄ¼şÖĞÕë¶ÔshapeidµÄÉú³ÉºÃÏñ¹æÂÉ£¬ÆäÄÚÖÃµÄÉú³Éº¯ÊıÃ»·¨µÃÖª£¬µ«ÊÇÖ»Òª±£Ö¤ÆäÎ¨Ò»¾ÍĞĞ
-		//Éú³ÉÎ¨Ò»shapid
+		//shapId--<v:shap>æ ‡ç­¾id
+		//mhtæ–‡ä»¶ä¸­é’ˆå¯¹shapeidçš„ç”Ÿæˆå¥½åƒè§„å¾‹ï¼Œå…¶å†…ç½®çš„ç”Ÿæˆå‡½æ•°æ²¡æ³•å¾—çŸ¥ï¼Œä½†æ˜¯åªè¦ä¿è¯å…¶å”¯ä¸€å°±è¡Œ
+		//ç”Ÿæˆå”¯ä¸€shapid
 		String shapeid="myShapId"+StringUtil.seqGenerate().toString();
 		
-		//spid ,Í¬shapeid´¦Àí
+		//spid ,åŒshapeidå¤„ç†
 		String spid="mySpId"+StringUtil.seqGenerate().toString();
 		
 		String typeid="#_x0000_t75";
@@ -112,7 +118,7 @@ public class ImageConverter {
 		sb1.append("</v:shape>");
 		sb1.append("<![endif]-->");
 		
-		//ÒÔÏÂÊÇÎªÁË¼æÈİÓÎÀÀÆ÷ÏÔÊ¾Ê±µÄĞ§¹û£¬µ«ÊÇÈç¹ûÊÇ´¿wordÔÄ¶ÁµÄ»°Ã»±ØÒªÕâÃ´×ö¡£
+		//ä»¥ä¸‹æ˜¯ä¸ºäº†å…¼å®¹æ¸¸è§ˆå™¨æ˜¾ç¤ºæ—¶çš„æ•ˆæœï¼Œä½†æ˜¯å¦‚æœæ˜¯çº¯wordé˜…è¯»çš„è¯æ²¡å¿…è¦è¿™ä¹ˆåšã€‚
 	/*	StringBuilder sb2=new StringBuilder();
 		sb2.append(" <![if !vml]>");
 		
@@ -126,7 +132,7 @@ public class ImageConverter {
 		return sb1.toString();
 	}
 	
-	//½«Í¼Æ¬ÊôĞÔĞÅÏ¢×ª»¯³ÉwordÎÄµµµÄĞÅÏ¢
+	//å°†å›¾ç‰‡å±æ€§ä¿¡æ¯è½¬åŒ–æˆwordæ–‡æ¡£çš„ä¿¡æ¯
 	private static String generateImageBodyBlockStyleAttr(String imageFilePath, int height,int width){
 		StringBuilder sb=new StringBuilder();
 		
@@ -147,7 +153,7 @@ public class ImageConverter {
 		}
 		
 		
-		//½«ÏñËØ×ª»¯³Épt 
+		//å°†åƒç´ è½¬åŒ–æˆpt 
 	    BigDecimal heightValue=new BigDecimal(height*12/16);
 	    heightValue= heightValue.setScale(2, BigDecimal.ROUND_HALF_UP);
 	    BigDecimal widthValue=new BigDecimal(width*12/16);
@@ -188,7 +194,7 @@ public class ImageConverter {
 		return sb.toString();
 	}
 	
-	//µÃµ½Í¼Æ¬ÀàĞÍ
+	//å¾—åˆ°å›¾ç‰‡ç±»å‹
 	private static String getImageContentType(String fileTypeName){
 		String result="image/jpeg";
 		//http://tools.jb51.net/table/http_content_type
@@ -207,8 +213,6 @@ public class ImageConverter {
 			result="image/pnetvue";
 		}else if(fileTypeName.equals("png") || fileTypeName.equals("bmp") ){
 			result="image/png";
-		}else if(fileTypeName.equals("rp")){
-			result="image/vnd.rn-realpix";
 		}else if(fileTypeName.equals("rp")){
 			result="image/vnd.rn-realpix";
 		}

@@ -1,7 +1,6 @@
 package com.njxz.exam.intercept;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
@@ -106,7 +105,6 @@ public class SecurityFilter implements Filter{
 						Pattern.compile("/databaseBabckup/*").matcher(path).find()||
 						Pattern.compile("/testPaper/*").matcher(path).find()||
 						Pattern.compile("/knowledgePoints/*").matcher(path).find()||
-						Pattern.compile("/subject/*").matcher(path).find()||
 						path.equals("/questions/print")
 						) {
 					

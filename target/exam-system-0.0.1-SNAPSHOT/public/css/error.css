@@ -1,0 +1,10 @@
+.error{
+	color:#FF4500;
+}
+
+label.error{
+	color:#FF4500;
+}
+input.error{
+	background:#A87860;
+}

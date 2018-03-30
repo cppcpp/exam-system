@@ -17,7 +17,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 public class ImageUploadUtil {
 
-    // Í¼Æ¬ÀàĞÍ
+    // å›¾ç‰‡ç±»å‹
     private static List<String> fileTypes = new ArrayList<String>();
 
     static {
@@ -29,47 +29,47 @@ public class ImageUploadUtil {
     }
 
     /**
-     * Í¼Æ¬ÉÏ´«
+     * å›¾ç‰‡ä¸Šä¼ 
      * 
      * @Title upload
      * @param request
      * @param DirectoryName
-     *            ÎÄ¼şÉÏ´«Ä¿Â¼£º±ÈÈçupload(ÎŞĞè´øÇ°ÃæµÄ/) upload/news ..
+     *            æ–‡ä»¶ä¸Šä¼ ç›®å½•ï¼šæ¯”å¦‚upload(æ— éœ€å¸¦å‰é¢çš„/) upload/news ..
      * @return
      * @throws IllegalStateException
      * @throws IOException
      */
     public static String upload(HttpServletRequest request, String DirectoryName) throws IllegalStateException,
             IOException {
-        // ´´½¨Ò»¸öÍ¨ÓÃµÄ¶à²¿·Ö½âÎöÆ÷
+        // åˆ›å»ºä¸€ä¸ªé€šç”¨çš„å¤šéƒ¨åˆ†è§£æå™¨
         CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(request.getSession()
                 .getServletContext());
-        // Í¼Æ¬Ãû³Æ
+        // å›¾ç‰‡åç§°
         String fileName = null;
-        // ÅĞ¶Ï request ÊÇ·ñÓĞÎÄ¼şÉÏ´«,¼´¶à²¿·ÖÇëÇó
+        // åˆ¤æ–­ request æ˜¯å¦æœ‰æ–‡ä»¶ä¸Šä¼ ,å³å¤šéƒ¨åˆ†è¯·æ±‚
         if (multipartResolver.isMultipart(request)) {
-            // ×ª»»³É¶à²¿·Örequest
+            // è½¬æ¢æˆå¤šéƒ¨åˆ†request
             MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest) request;
-            // È¡µÃrequestÖĞµÄËùÓĞÎÄ¼şÃû
+            // å–å¾—requestä¸­çš„æ‰€æœ‰æ–‡ä»¶å
             Iterator<String> iter = multiRequest.getFileNames();
             while (iter.hasNext()) {
-                // ¼ÇÂ¼ÉÏ´«¹ı³ÌÆğÊ¼Ê±µÄÊ±¼ä£¬ÓÃÀ´¼ÆËãÉÏ´«Ê±¼ä
+                // è®°å½•ä¸Šä¼ è¿‡ç¨‹èµ·å§‹æ—¶çš„æ—¶é—´ï¼Œç”¨æ¥è®¡ç®—ä¸Šä¼ æ—¶é—´
                 // int pre = (int) System.currentTimeMillis();
-                // È¡µÃÉÏ´«ÎÄ¼ş
+                // å–å¾—ä¸Šä¼ æ–‡ä»¶
                 MultipartFile file = multiRequest.getFile(iter.next());
                 if (file != null) {
-                    // È¡µÃµ±Ç°ÉÏ´«ÎÄ¼şµÄÎÄ¼şÃû³Æ
+                    // å–å¾—å½“å‰ä¸Šä¼ æ–‡ä»¶çš„æ–‡ä»¶åç§°
                     String myFileName = file.getOriginalFilename();
-                    // Èç¹ûÃû³Æ²»Îª¡°¡±,ËµÃ÷¸ÃÎÄ¼ş´æÔÚ£¬·ñÔòËµÃ÷¸ÃÎÄ¼ş²»´æÔÚ
+                    // å¦‚æœåç§°ä¸ä¸ºâ€œâ€,è¯´æ˜è¯¥æ–‡ä»¶å­˜åœ¨ï¼Œå¦åˆ™è¯´æ˜è¯¥æ–‡ä»¶ä¸å­˜åœ¨
                     if (myFileName.trim() != "") {
-                        // »ñµÃÍ¼Æ¬µÄÔ­Ê¼Ãû³Æ
+                        // è·å¾—å›¾ç‰‡çš„åŸå§‹åç§°
                         String originalFilename = file.getOriginalFilename();
-                        // »ñµÃÍ¼Æ¬ºó×ºÃû³Æ,Èç¹ûºó×º²»ÎªÍ¼Æ¬¸ñÊ½£¬Ôò²»ÉÏ´«
+                        // è·å¾—å›¾ç‰‡åç¼€åç§°,å¦‚æœåç¼€ä¸ä¸ºå›¾ç‰‡æ ¼å¼ï¼Œåˆ™ä¸ä¸Šä¼ 
                         String suffix = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
                         if (!fileTypes.contains(suffix)) {
                             continue;
                         }
-                        // »ñµÃÉÏ´«Â·¾¶µÄ¾ø¶ÔÂ·¾¶µØÖ·(/upload)-->
+                        // è·å¾—ä¸Šä¼ è·¯å¾„çš„ç»å¯¹è·¯å¾„åœ°å€(/upload)-->
                         //String realPath = request.getSession().getServletContext().getRealPath("/" + DirectoryName);
                         
                         String t=request.getSession().getServletContext().getRealPath("");
@@ -80,20 +80,20 @@ public class ImageUploadUtil {
                         String realPath=t.substring(0, t.lastIndexOf('\\'))+"\\"+DirectoryName;
                         System.out.println("realPath:-------------"+realPath);
                         
-                        // Èç¹ûÂ·¾¶²»´æÔÚ£¬Ôò´´½¨¸ÃÂ·¾¶
+                        // å¦‚æœè·¯å¾„ä¸å­˜åœ¨ï¼Œåˆ™åˆ›å»ºè¯¥è·¯å¾„
                         File realPathDirectory = new File(realPath);
                         if (realPathDirectory == null || !realPathDirectory.exists()) {
                             realPathDirectory.mkdirs();
                         }
-                        // ÖØÃüÃûÉÏ´«ºóµÄÎÄ¼şÃû 111112323.jpg
+                        // é‡å‘½åä¸Šä¼ åçš„æ–‡ä»¶å 111112323.jpg
                         fileName = StringUtil.seqGenerate().toString() + suffix;
-                        // ¶¨ÒåÉÏ´«Â·¾¶ .../upload/111112323.jpg
+                        // å®šä¹‰ä¸Šä¼ è·¯å¾„ .../upload/111112323.jpg
                         File uploadFile = new File(realPathDirectory + "\\" + fileName);
                         System.out.println(uploadFile);
                         file.transferTo(uploadFile);
                     }                                                                                                                                            
                 }
-                // ¼ÇÂ¼ÉÏ´«¸ÃÎÄ¼şºóµÄÊ±¼ä
+                // è®°å½•ä¸Šä¼ è¯¥æ–‡ä»¶åçš„æ—¶é—´
                 // int finaltime = (int) System.currentTimeMillis();
                 // System.out.println(finaltime - pre);
             }
@@ -102,20 +102,20 @@ public class ImageUploadUtil {
     }
 
     /**
-     * ckeditorÎÄ¼şÉÏ´«¹¦ÄÜ£¬»Øµ÷£¬´«»ØÍ¼Æ¬Â·¾¶£¬ÊµÏÖÔ¤ÀÀĞ§¹û¡£
+     * ckeditoræ–‡ä»¶ä¸Šä¼ åŠŸèƒ½ï¼Œå›è°ƒï¼Œä¼ å›å›¾ç‰‡è·¯å¾„ï¼Œå®ç°é¢„è§ˆæ•ˆæœã€‚
      * 
      * @Title ckeditor
      * @param request
      * @param response
      * @param DirectoryName
-     *            ÎÄ¼şÉÏ´«Ä¿Â¼£º±ÈÈçupload(ÎŞĞè´øÇ°ÃæµÄ/) upload/..
+     *            æ–‡ä»¶ä¸Šä¼ ç›®å½•ï¼šæ¯”å¦‚upload(æ— éœ€å¸¦å‰é¢çš„/) upload/..
      * @throws IOException
      */
     public static void ckeditor(HttpServletRequest request, HttpServletResponse response, String DirectoryName)
             throws IOException {
         String fileName = upload(request, DirectoryName);
-        // ½áºÏckeditor¹¦ÄÜ
-        // imageContextPathÎªÍ¼Æ¬ÔÚ·şÎñÆ÷µØÖ·£¬Èçupload/123.jpg,·Ç¾ø¶ÔÂ·¾¶
+        // ç»“åˆckeditoråŠŸèƒ½
+        // imageContextPathä¸ºå›¾ç‰‡åœ¨æœåŠ¡å™¨åœ°å€ï¼Œå¦‚upload/123.jpg,éç»å¯¹è·¯å¾„
 //       String imageContextPath = request.getContextPath() + "/" + DirectoryName + "/" + fileName;
         String imageContextPath = "/"+DirectoryName + "/" + fileName;
         //String imageContextPath = "E:/workspace/javaTotal/exam-system/src/main/webapp"+ "/" + DirectoryName + "/" + fileName;

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+
+
+	<aop:aspectj-autoproxy expose-proxy="true" />
+	<context:annotation-config />
+
+	<context:component-scan base-package="com.njxz.exam.*" />
+
+	<!-- <context:component-scan base-package="com.njxz.exam.intercept"> <context:include-filter 
+		type="annotation" expression="org.aspectj.lang.annotation.Aspect"/> </context:component-scan> -->
+
+
+
+
+	<!-- <context:component-scan base-package="com.njxz.exam.*"> <context:exclude-filter 
+		type="annotation" expression="org.aspectj.lang.annotation.Aspect" /> <context:exclude-filter 
+		type="annotation" expression="org.springframework.stereotype.Controller" 
+		/> </context:component-scan> -->
+
+	<!-- 启动注解驱动缓存 -->
+	<cache:annotation-driven cache-manager="cacheManager" />
+
+	<!-- spring3.1内置了5个缓存管理器 spring3.2又提供了redis和gemfire -->
+	<bean id="ehcache"
+		class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:encache.xml"></property>
+	</bean>
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+		<property name="cacheManager" ref="ehcache"></property>
+	</bean>
+
+	<!-- *************************************mybatis配置文件****************************** -->
+	<!-- 读取数据库配置文件信息 -->
+	<!-- <context:property-placeholder location="classpath:jdbc.properties"/> -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:jdbc.properties" />
+	</bean>
+	<!-- 1.配置数据源 -->
+	<bean id="mysqlSource" class="org.apache.commons.dbcp2.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="url" value="jdbc:mysql://localhost:3306/exam-system-db"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="cpprootmysql"></property>
+		<!-- 初始连接数 default 0 -->
+		<property name="initialSize" value="5" />
+		<!-- 可以同时从该连接池分配的最大活动连接数 default 8 -->
+		<property name="maxTotal" value="10" />
+		<!--在池中可以保持空闲的最大数量 default 8 -->
+		<property name="maxIdle" value="10" />
+		<!-- 保持空闲的最小连接数 default0 -->
+		<property name="minIdle" value="2" />
+		<!-- 抛出异常钱的最大等待时间 default 无限期 -->
+		<property name="maxWaitMillis" value="6000" />
+	</bean>
+
+	<!-- 创建session工厂 基础mybatis中，用SqlSessionFactoryBuilder来创建 -->
+	<bean name="mySqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="mysqlSource"></property>
+		<!-- <property name="configLocation" value="classpath:mybatisConfig.xml" 
+			/> -->
+		<property name="mapperLocations" value="classpath:com/njxz/exam/mapper/*.xml"></property>
+		<!-- pageHelper配置文件 -->
+		<property name="configLocation" value="classpath:mybatisPageHelper.xml" />
+	</bean>
+
+	<!-- dao接口所在包名，Spring自动查找下面的类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.njxz.exam.dao"></property>
+		<property name="sqlSessionFactory" ref="mySqlSessionFactory"></property>
+	</bean>
+
+	<!-- 配置spring的PlatformTransactionManager，名字为默认值 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="mysqlSource" />
+	</bean>
+	
+	<!-- 开启事务控制的注解支持 -->  
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+	<!-- 配置返回json数据格式的配置 -->
+	<!-- <bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="mappingJackson2HttpMessageConverter" />
+			</list>
+		</property>
+	</bean> -->
+	<!-- 和Controller层的@Before切面冲突 -->
+	<!-- <bean id="mappingJackson2HttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>application/json;charset=UTF-8</value>
+				<value>text/html;charset=UTF-8</value>
+				<value>text/json;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean> -->
+
+</beans>

@@ -96,9 +96,7 @@ public class KnowledgePointsController {
 		PageInfo<KnowledgePoints> page = new PageInfo<KnowledgePoints>(listKP);
 		model.addAttribute("page", page);
 
-		/*
-		 * for (KnowledgePoints kp : listKP) { System.out.println(kp.toString()); }
-		 */
+		
 		return "knowledgePoints";
 	}
 
@@ -107,7 +105,7 @@ public class KnowledgePointsController {
 		// --------------------2---------虚拟数据--从session中取--完成
 		User user= (User) session.getAttribute("user");
 		List<Subject> listS = subjectService.getSubjectsByUId(user.getuId().toString());
-		// model.addAttribute("subjects", listS);--------如果输入数据失败，重新请求，失效。因此存入session中
+//		model.addAttribute("subjects", listS);//--------如果输入数据失败，重新请求，失效。因此存入session中
 		session.setAttribute("subjects", listS);
 		model.addAttribute("konwledgePoint", new KnowledgePoints());
 		return "knowledgePointAdd";
@@ -128,7 +126,8 @@ public class KnowledgePointsController {
 		
 		
 
-		Subject subject = subjectService.getSubjectById(new Long(knowledgePoints.getSubjectId()));
+		//String的构造函数和包装原语的对象不应该被使用--原因：表意不明、占用更多内存
+		Subject subject = subjectService.getSubjectById(Long.valueOf(knowledgePoints.getSubjectId()));
 
 		// 增加科目标题
 		knowledgePoints.setSubjectTitle(subject.getsTitle());

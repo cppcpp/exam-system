@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.aspectj.util.LangUtil.ProcessController.Thrown;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +25,6 @@ import com.njxz.exam.service.ExamQuestiontypeService;
 import com.njxz.exam.service.ExamService;
 import com.njxz.exam.service.SubjectService;
 import com.njxz.exam.service.UserSubjectService;
-import com.njxz.exam.util.StringUtil;
-import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 
 @Service("examService")
 public class ExamServiceImpl implements ExamService{

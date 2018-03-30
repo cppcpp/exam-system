@@ -486,12 +486,13 @@ public class TestPaperController extends Logable{
 			handler.setNextPartId("01D395FD.81B8E900");
 		
 		//写入文件中，
+		File file;
 		try {
 			handler.handledHtml(request);
 			
 			String logFile="D:\\log.txt";
 			
-			File file=new File(logFile);
+			file=new File(logFile);
 			//FileOutputStream out=new FileOutputStream(file);
 			FileWriter fw=new FileWriter(file);
 			
@@ -522,6 +523,8 @@ public class TestPaperController extends Logable{
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally {
+			
 		}
 
 		
@@ -855,9 +858,12 @@ public class TestPaperController extends Logable{
 		
 		//最终结果试题
 		System.out.println("!!!!!!!!!!!!!!!!!!!!!最终试题！！！！！！！！！！！！！！！！！！！！！！！");
-		System.out.println("试卷id："+resultUnit.geteId());
-		System.out.println("题目数量\t知识点分布\t\t难度系数\t\t适应度");
-		System.out.println(resultUnit.getQuestionList().size()+"\t"+resultUnit.getKpCoverage()+"\t"+resultUnit.getDifficultyLevel()+"\t"+resultUnit.getAdapterDegree());
+		if(resultUnit!=null) {
+			System.out.println("试卷id："+resultUnit.geteId());
+			System.out.println("题目数量\t知识点分布\t\t难度系数\t\t适应度");
+			System.out.println(resultUnit.getQuestionList().size()+"\t"+resultUnit.getKpCoverage()+"\t"+resultUnit.getDifficultyLevel()+"\t"+resultUnit.getAdapterDegree());
+			
+		}
 		
 		
 		//将产生的最终试卷存入数据库---未完成

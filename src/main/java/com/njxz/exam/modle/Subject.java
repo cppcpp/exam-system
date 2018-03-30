@@ -1,5 +1,6 @@
 package com.njxz.exam.modle;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.validation.constraints.NotNull;
@@ -8,7 +9,10 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Subject {
+public class Subject implements Serializable{
+	
+	private static final long serialVersionUID = 6042839088724245719L;
+
 	private Long sId;
 
 	@NotNull(message = "{subject.sTitle.nullOrEmpty}")

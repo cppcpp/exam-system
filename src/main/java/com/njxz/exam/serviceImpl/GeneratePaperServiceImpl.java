@@ -365,10 +365,12 @@ public class GeneratePaperServiceImpl implements GeneratePaperService {
 	}
 
 	// 根据qtId得到题型的分数
-	public int getScoreById(List<Map<String, Object>> qtList, Long qtId) {
+	public double getScoreById(List<Map<String, Object>> qtList, Long qtId) {
 		for (Map<String, Object> map : qtList) {
 			if (map.get("qtId").toString().equals(qtId.toString())) {
-				return Integer.parseInt(map.get("qtScore").toString());
+				//不能是int类型，应该是double
+				//return Integer.parseInt(map.get("qtScore").toString());
+				return Double.parseDouble(map.get("qtScore").toString());
 			}
 		}
 		return 0;

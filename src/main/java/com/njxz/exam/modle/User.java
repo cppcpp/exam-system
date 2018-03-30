@@ -1,5 +1,6 @@
 package com.njxz.exam.modle;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.validation.constraints.NotNull;
@@ -14,7 +15,9 @@ import org.springframework.stereotype.Component;
  * */
 @Alias("User")
 @Component
-public class User {
+public class User implements Serializable{
+	//生成唯一的序列化Id，考虑兼容性要求
+	private static final long serialVersionUID = 5656989856162309746L;
 	// 用户id，自增
 	private Long uId;
 	// 用户名

@@ -1,13 +1,12 @@
 package com.njxz.exam.util;
 
-import org.apache.ibatis.annotations.Case;
 
 /*
- * ½«ÄÑÒ×³Ì¶È×ö³É¿ÉÅäÖÃ£¨µ«ÊÇÖ»ÄÜÅäÖÃÒ»´Î£©
- * ³£Á¿Àà
+ * å°†éš¾æ˜“ç¨‹åº¦åšæˆå¯é…ç½®ï¼ˆä½†æ˜¯åªèƒ½é…ç½®ä¸€æ¬¡ï¼‰
+ * å¸¸é‡ç±»
  * */
 public class Constants {
-	//difficulty_levelÄÑ¶ÈÏµÊıÈ¡Öµ
+	//difficulty_leveléš¾åº¦ç³»æ•°å–å€¼
 	public static Double DIFFICULTY_LEVEL_VERYEASY=(double) 0.1;
 	public static Double DIFFICULTY_LEVEL_EASY=(double) 0.3;
 	public static Double DIFFICULTY_LEVEL_MEDIUM=(double) 0.5;
@@ -15,69 +14,69 @@ public class Constants {
 	public static Double DIFFICULTY_LEVEL_VERYHARD=(double) 0.9;
 	
 
-	public static double KP_COVERAGE_RATE = 0;//ÖªÊ¶µã¸²¸ÇÂÊ Õ¼ ÊÊÓ¦¶È ±ÈÂÊ
-	public static double DIFFICULTY_RATE = 1;//ÄÑ¶ÈÏµÊı  Õ¼ ÊÊÓ¦¶È±ÈÂÊ
+	public static double KP_COVERAGE_RATE = 0;//çŸ¥è¯†ç‚¹è¦†ç›–ç‡ å  é€‚åº”åº¦ æ¯”ç‡
+	public static double DIFFICULTY_RATE = 1;//éš¾åº¦ç³»æ•°  å  é€‚åº”åº¦æ¯”ç‡
 	
-	//ÆÚÍûÊÊÓ¦¶È
+	//æœŸæœ›é€‚åº”åº¦
 	public static double EXPAND_ADATPER=0.95;
-	//×î´óµü´ú´ÎÊı
+	//æœ€å¤§è¿­ä»£æ¬¡æ•°
 	public static int RUN_Count=500;
 	
 	
-	//ÉÏ´«Í¼Æ¬´æ·ÅÎ»ÖÃ
+	//ä¸Šä¼ å›¾ç‰‡å­˜æ”¾ä½ç½®
 	public static String PHOTO_DIRECTORY_NAME="upload";
-	//wordÄ£°å´æ·ÅÎ»ÖÃ
+	//wordæ¨¡æ¿å­˜æ”¾ä½ç½®
 	public static String WORD_TEMPLETE_DIRECTORY_NAME="wordTemplete";
 	
 	
-	public static String CHINESE_1="Ò»";
+	public static String CHINESE_1="ä¸€";
 	
-	//µÃµ½1-20Ö®¼äµÄÖĞÎÄÊı×Ö
+	//å¾—åˆ°1-20ä¹‹é—´çš„ä¸­æ–‡æ•°å­—
 	public static String numGetChinese(int i) {
 		if(i<=0||i>20) {
 			return "";
 		}
 		switch (i) {
 		case 1:
-			return "Ò»";
+			return "ä¸€";
 		case 2:
-			return "¶ş";
+			return "äºŒ";
 		case 3:
-			return "Èı";
+			return "ä¸‰";
 		case 4:
-			return "ËÄ";
+			return "å››";
 		case 5:
-			return "Îå";
+			return "äº”";
 		case 6:
-			return "Áù";
+			return "å…­";
 		case 7:
-			return "Æß";
+			return "ä¸ƒ";
 		case 8:
-			return "°Ë";
+			return "å…«";
 		case 9:
-			return "¾Å";
+			return "ä¹";
 		case 10:
-			return "Ê®";
+			return "å";
 		case 11:
-			return "Ê®Ò»";
+			return "åä¸€";
 		case 12:
-			return "Ê®¶ş";
+			return "åäºŒ";
 		case 13:
-			return "Ê®Èı";
+			return "åä¸‰";
 		case 14:
-			return "Ê®ËÄ";
+			return "åå››";
 		case 15:
-			return "Ê®Îå";
+			return "åäº”";
 		case 16:
-			return "Ê®Áù";
+			return "åå…­";
 		case 17:
-			return "Ê®Æß";
+			return "åä¸ƒ";
 		case 18:
-			return "Ê®°Ë";
+			return "åå…«";
 		case 19:
-			return "Ê®¾Å";
+			return "åä¹";
 		case 20:
-			return "¶şÊ®";
+			return "äºŒå";
 		default:
 			return "";
 		}
@@ -86,23 +85,23 @@ public class Constants {
 	
 	
 	
-	//µÃµ½À§ÄÑ¶ÈµÄÖĞÎÄ
+	//å¾—åˆ°å›°éš¾åº¦çš„ä¸­æ–‡
 	public static String getDiffLevelStrCN(Double level) {
 		String levelCN="";
 		if((level-DIFFICULTY_LEVEL_VERYEASY)<0.0001&&(level-DIFFICULTY_LEVEL_VERYEASY)>-0.0001) {
-			levelCN="ºÜÈİÒ×";
+			levelCN="å¾ˆå®¹æ˜“";
 		}
 		if((level-DIFFICULTY_LEVEL_EASY)<0.0001&&(level-DIFFICULTY_LEVEL_EASY)>-0.0001) {
-			levelCN="ÈİÒ×";
+			levelCN="å®¹æ˜“";
 		}
 		if((level-DIFFICULTY_LEVEL_MEDIUM)<0.0001&&(level-DIFFICULTY_LEVEL_MEDIUM)>-0.0001) {
-			levelCN="ÖĞµÈ";
+			levelCN="ä¸­ç­‰";
 		}
 		if((level-DIFFICULTY_LEVEL_HARD)<0.0001&&(level-DIFFICULTY_LEVEL_HARD)>-0.0001) {
-			levelCN="À§ÄÑ";
+			levelCN="å›°éš¾";
 		}
 		if((level-DIFFICULTY_LEVEL_VERYHARD)<0.0001&&(level-DIFFICULTY_LEVEL_VERYHARD)>-0.0001) {
-			levelCN="ºÜÀ§ÄÑ";
+			levelCN="å¾ˆå›°éš¾";
 		}
 		return levelCN;
 	}

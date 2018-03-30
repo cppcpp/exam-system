@@ -1,0 +1,6 @@
+projectKey=com.exam:exam-system
+serverUrl=http://localhost:9000
+serverVersion=7.0.0.36138
+dashboardUrl=http://localhost:9000/dashboard/index/com.exam:exam-system
+ceTaskId=AWJxPs-ODt1dJqKGcjPd
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AWJxPs-ODt1dJqKGcjPd

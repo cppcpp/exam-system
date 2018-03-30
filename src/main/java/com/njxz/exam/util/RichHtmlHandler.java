@@ -18,7 +18,7 @@ public class RichHtmlHandler {
 
 	private String docSrcParent = "";
 	private String docSrcLocationPrex = "";
-	private String nextPartId;//±ØĞëºÍÒÑÉú³ÉµÄÅäÖÃÎÄ¼şÖĞµÄÆäËûnextPartIdÏàÍ¬   01D395FD.81B8E900
+	private String nextPartId;//å¿…é¡»å’Œå·²ç”Ÿæˆçš„é…ç½®æ–‡ä»¶ä¸­çš„å…¶ä»–nextPartIdç›¸åŒ   01D395FD.81B8E900
 
 	private String handledDocBodyBlock;
 	private List<String> docBase64BlockResults = new ArrayList<String>();
@@ -26,13 +26,13 @@ public class RichHtmlHandler {
 	
 	
 	public RichHtmlHandler(String html) {
-		//Jsoup½âÎöhtmlÀàĞÍµÄÎÄ¼ş
+		//Jsoupè§£æhtmlç±»å‹çš„æ–‡ä»¶
 		doc = Jsoup.parse(wrappHtml(html));
 	}
 	
-	//½«´«½øÀ´µÄ×Ö·û´®°ü×°³ÉÍêÕûµÄhtmlÎÄ¼ş
+	//å°†ä¼ è¿›æ¥çš„å­—ç¬¦ä¸²åŒ…è£…æˆå®Œæ•´çš„htmlæ–‡ä»¶
 	private String wrappHtml(String html){
-		// ÒòÎª´«µİ¹ıÀ´¶¼ÊÇ²»ÍêÕûµÄdoc
+		// å› ä¸ºä¼ é€’è¿‡æ¥éƒ½æ˜¯ä¸å®Œæ•´çš„doc
 		StringBuilder sb = new StringBuilder();
 		sb.append("<html>");
 		sb.append("<body>");
@@ -43,7 +43,7 @@ public class RichHtmlHandler {
 		return sb.toString();
 	}
 	
-	//Ö÷Òª·½·¨---´¦Àí´«½øÀ´µÄhtmlÎÄ¼ş--Ö÷Òª´¦ÀíÍ¼Æ¬
+	//ä¸»è¦æ–¹æ³•---å¤„ç†ä¼ è¿›æ¥çš„htmlæ–‡ä»¶--ä¸»è¦å¤„ç†å›¾ç‰‡
 	public void handledHtml(HttpServletRequest request)
 			throws IOException {
 		Elements imags = doc.getElementsByTag("img");
@@ -52,36 +52,36 @@ public class RichHtmlHandler {
 			return;
 		}
 
-		// ×ª»»³Éword mht ÄÜÊ¶±ğÍ¼Æ¬±êÇ©ÄÚÈİ£¬È¥Ìæ»»htmlÖĞµÄÍ¼Æ¬±êÇ©
+		// è½¬æ¢æˆword mht èƒ½è¯†åˆ«å›¾ç‰‡æ ‡ç­¾å†…å®¹ï¼Œå»æ›¿æ¢htmlä¸­çš„å›¾ç‰‡æ ‡ç­¾
 
 		for (Element item : imags) {
-			// °ÑÎÄ¼şÈ¡³öÀ´
+			// æŠŠæ–‡ä»¶å–å‡ºæ¥
 			String src = item.attr("src");
 			String srcRealPath = src;
 			
-			//Í¼Æ¬µÄÊµ¼ÊµØÖ·
+			//å›¾ç‰‡çš„å®é™…åœ°å€
 			String t=request.getSession().getServletContext().getRealPath("");
 	        srcRealPath=t.substring(0, t.lastIndexOf('\\'))+src;
 	        
 	        
 			File imageFile = new File(srcRealPath);
-			//Í¼Æ¬Ãû³Æ
+			//å›¾ç‰‡åç§°
 			String imageFielShortName = imageFile.getName();
-			//µÃµ½ÎÄ¼şºó×º
+			//å¾—åˆ°æ–‡ä»¶åç¼€
 			String fileTypeName = srcRealPath.substring(srcRealPath.lastIndexOf(".")+1);
 
-			//Éú³É´æ´¢ÔÚftlÎÄ¼şÖĞµÄÍ¼Æ¬Ãû³Æ
+			//ç”Ÿæˆå­˜å‚¨åœ¨ftlæ–‡ä»¶ä¸­çš„å›¾ç‰‡åç§°
 			String docFileName = "image" + StringUtil.seqGenerate() + "."+ fileTypeName;
-			//Éú³É´æ´¢ÔÚftlÎÄ¼şÖĞµÄÍ¼Æ¬µØÖ·--ÒÀ¾İ´ËµØÖ·Ñ°ÕÒÍ¼Æ¬µÄbase64±àÂë
+			//ç”Ÿæˆå­˜å‚¨åœ¨ftlæ–‡ä»¶ä¸­çš„å›¾ç‰‡åœ°å€--ä¾æ®æ­¤åœ°å€å¯»æ‰¾å›¾ç‰‡çš„base64ç¼–ç 
 			String srcLocationShortName = docSrcParent + "/" + docFileName;
 
-			String styleAttr = item.attr("                                                                      style"); // ÑùÊ½
-			//¸ß¶È
+			String styleAttr = item.attr("                                                                      style"); // æ ·å¼
+			//é«˜åº¦
 			String imagHeightStr=item.attr("height");;
 			if(StringUtil.isEmpty(imagHeightStr)){
 				imagHeightStr = getStyleAttrValue(styleAttr, "height");
 			}
-			//¿í¶È
+			//å®½åº¦
 			String imagWidthStr=item.attr("width");;
 			if(StringUtil.isEmpty(imagHeightStr)){
 				imagWidthStr = getStyleAttrValue(styleAttr, "width");
@@ -90,7 +90,7 @@ public class RichHtmlHandler {
 			imagHeightStr = imagHeightStr.replace("px", "");
 			imagWidthStr = imagWidthStr.replace("px", "");
 			if(StringUtil.isEmpty(imagHeightStr)){
-				//È¥µÃµ½Ä¬ÈÏµÄÎÄ¼ş¸ß¶È
+				//å»å¾—åˆ°é»˜è®¤çš„æ–‡ä»¶é«˜åº¦
 				imagHeightStr="0";
 			}
 			if(StringUtil.isEmpty(imagWidthStr)){
@@ -99,14 +99,14 @@ public class RichHtmlHandler {
 			int imageHeight = Integer.parseInt(imagHeightStr);
 			int imageWidth = Integer.parseInt(imagWidthStr);
 			
-			// µÃµ½ÎÄ¼şµÄword mhtµÄbody¿é
+			// å¾—åˆ°æ–‡ä»¶çš„word mhtçš„bodyå—
 			String handledDocBodyBlock = ImageConverter.toDocBodyBlock(srcRealPath,
 					imageFielShortName, imageHeight, imageWidth,styleAttr,
 					srcLocationShortName);
 
 			item.parent().append(handledDocBodyBlock);
 			item.remove();
-			// È¥Ìæ»»Ô­ÉúµÄhtmlÖĞµÄimag
+			// å»æ›¿æ¢åŸç”Ÿçš„htmlä¸­çš„imag
 
 			String base64Content = ImageConverter
 					.imageToBase64(srcRealPath);
@@ -125,16 +125,16 @@ public class RichHtmlHandler {
 
 	}
 	
-	//µÃµ½Í¼Æ¬µÄÊôĞÔ--¸ß¶È£¬¿í¶È
+	//å¾—åˆ°å›¾ç‰‡çš„å±æ€§--é«˜åº¦ï¼Œå®½åº¦
 	private String getStyleAttrValue(String style, String attributeKey) {
 		if (StringUtil.isEmpty(style)) {
 			return "";
 		}
 
-		// ÒÔ";"·Ö¸î
+		// ä»¥";"åˆ†å‰²
 		String[] styleAttrValues = style.split(";");
 		for (String item : styleAttrValues) {
-			// ÔÚÒÔ ":"·Ö¸î
+			// åœ¨ä»¥ ":"åˆ†å‰²
 			String[] keyValuePairs = item.split(":");
 			if (attributeKey.equals(keyValuePairs[0])) {
 				return keyValuePairs[1];
