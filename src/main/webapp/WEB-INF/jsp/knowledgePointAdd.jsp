@@ -458,7 +458,7 @@
 	
 	<sf:select path="subjectId">
 			<c:if test="${sessionScope.subjects!=null}">
-				<sf:option value="">请选择科目</sf:option>
+				<!--<sf:option value="">请选择科目</sf:option>-->
 				<c:forEach items="${sessionScope.subjects}" var="subject">
 					<sf:option value="${subject.sId}">${subject.sTitle}</sf:option>
 				</c:forEach> 

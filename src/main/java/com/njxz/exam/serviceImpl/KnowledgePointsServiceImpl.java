@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.pagehelper.PageHelper;
 import com.njxz.exam.dao.KnowledgePointsMapper;
 import com.njxz.exam.modle.KnowledgePoints;
 import com.njxz.exam.modle.KnowledgePointsExample;
@@ -20,9 +21,15 @@ public class KnowledgePointsServiceImpl implements KnowledgePointsService{
 		return mapper.insert(knowledgePoints);
 	}
 	
+	
+	
 	//根据subjectId查出所有的知识点----按照num,subNum对数据库排序
+	public List<KnowledgePoints> getKnowledgePointsBySIdPaging(String SId,int pageNum,int pageSize){
+		PageHelper.startPage(pageNum, pageSize);
+		return mapper.getKnowledgePointsBySId(Short.valueOf(SId));
+	}
+	
 	public List<KnowledgePoints> getKnowledgePointsBySId(String SId){
-		
 		return mapper.getKnowledgePointsBySId(Short.valueOf(SId));
 	}
 
@@ -47,6 +54,8 @@ public class KnowledgePointsServiceImpl implements KnowledgePointsService{
 		List<KnowledgePoints> list=mapper.selectByExample(example);
 		return list.size()>0;
 	}
+
+	
 
 	
 }

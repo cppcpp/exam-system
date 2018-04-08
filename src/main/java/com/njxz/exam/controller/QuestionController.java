@@ -71,25 +71,17 @@ public class QuestionController {
 	@RequestMapping(value = "/add", method = RequestMethod.GET)
 	public String questionAddPage(Model model) {
 		Questions questions = new Questions();
-		model.addAttribute(questions);
-		/*
-		 * Questions questions=new Questions(); model.addAttribute("questions",
-		 * questions);
-		 */
+		
 		// 增加科目和题型对象
 		// 根据用户获得科目信息
-		/*
-		 * User user=(User) session.getAttribute("user");
-		 * subjectService.getSubjectsByUId(user.getuId());
-		 */
-		// 模拟数据uId----2
-		/*
-		 * List<Subject> sLists= subjectService.getSubjectsByUId("2");
-		 * model.addAttribute("subjects",sLists);
-		 * 
-		 * List<QuestionType> qTLists=qTService.getAllQuestionTypes();
-		 * model.addAttribute("questionTypes", qTLists);
-		 */	
+//		 User user=(User) session.getAttribute("user");
+//		 List<Subject> sLists=subjectService.getSubjectsByUId(user.getuId().toString());
+		 
+//		 model.addAttribute("subjects",sLists);
+		  
+//		 List<QuestionType> qTLists=qTService.getAllQuestionTypes();
+//		 model.addAttribute("questionTypes", qTLists);
+		 model.addAttribute(questions);
 		return "questionAdd";
 	}
 
@@ -147,6 +139,7 @@ public class QuestionController {
 
 	// 进入试题详情界面2
 	//设计当没有sid、qtId时传入-1，-1
+	//当sid=-1时，试题列表为空，因为数据库中没有sid=-1的试题。只当qtId=-1时，查所有试题
 	@RequestMapping(value = "/all/{sId}/{qtId}", method = RequestMethod.GET)
 	public ModelAndView allQuestions(@PathVariable("sId") String sId, @PathVariable("qtId") String qtId,
 			@RequestParam(value="pageNum",required = false, defaultValue = "1") Integer pageNum,
@@ -314,8 +307,6 @@ public class QuestionController {
 		User user = (User) session.getAttribute("user");
 		List<Subject> sLists = subjectService.getSubjectsByUId(user.getuId().toString());
 
-		// 模拟数据uId----2
-		// List<Subject> sLists = subjectService.getSubjectsByUId("2");
 		map.put("subjects", sLists);
 		result.setMap(map);
 		result.setRtnCode("0");

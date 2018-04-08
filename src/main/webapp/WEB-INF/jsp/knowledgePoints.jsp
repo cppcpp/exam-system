@@ -484,6 +484,10 @@
 	<tr>
 </table>
 
+<!-- 增加 -->
+<div class="pull-right"><a href="add" data-toggle="tooltip" data-placement="top" title="添加知识点"><img src="../public/media/image/add.png" /></a></div>
+						
+
 <a href="${sessionScope.sId}?pageNum=${page.firstPage}">首页</a>|<a href="${sessionScope.sId}?pageNum=${page.prePage}">上一页</a>|<a href="${sessionScope.sId}?pageNum=${page.nextPage}">下一页</a>|<a href="${sessionScope.sId}?pageNum=${page.lastPage}">尾页</a></br>
 		共<c:out value="${page.total}"/>条数据，当前为第 <c:out value="${page.pageNum}"/> 页，共  <c:out value="${page.pages}"/>页
 							

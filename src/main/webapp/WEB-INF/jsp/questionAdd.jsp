@@ -600,19 +600,6 @@
 	<%-- <script type="text/javascript" src="../public/js/jquery-3.2.1.min.js"></script> --%>
 	<script type="text/javascript" src="../public/ckeditor/ckeditor.js"></script>
 	<script type="text/javascript" src="../public/js/questions.js"></script>
-	<script>
-
-		jQuery(document).ready(function() {       
-
-		   // initiate layout and plugins
-
-		   App.init();
-
-		   UIGeneral.init();
-
-		});
-
-	</script>
 
 	<!-- END JAVASCRIPTS -->
 

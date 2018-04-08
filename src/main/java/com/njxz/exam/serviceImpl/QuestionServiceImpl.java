@@ -49,15 +49,13 @@ public class QuestionServiceImpl implements QuestionService {
 		//取出页面信息
 		PageHelper.startPage(pageNum, pageSize);
 				
-		// 当sId=-1或qtId=-1时，查所有试题
 		QuestionsExample example = new QuestionsExample();
 		Criteria criteria = example.createCriteria();
-		if (sId != -1) {
-			criteria.andSIdEqualTo(sId);
-		}
+		
+		criteria.andSIdEqualTo(sId);
 		if (qtId!= -1) {
 			criteria.andQuestionTypeIdEqualTo(qtId);
-		}
+		}		
 		List<Questions> lists= mapper.selectByExample(example);
 		return lists;
 		

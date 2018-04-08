@@ -1,6 +1,8 @@
 package com.njxz.exam.controller;
 
 
+import static org.mockito.Matchers.contains;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -202,7 +204,10 @@ public class TestPaperController extends Logable{
 		//试卷题型信息--已经按照题型排列顺序排列
 		List<ExamQuestiontype> eqtList= eqtService.allExamQuestiontypes(eId);
 		List<Map<String,Object>> quesList=new ArrayList<>();
-		List<Map<String, Object>> question=new ArrayList<>();
+		List<Map<String, String>> answerList=new ArrayList<>();
+		List<Map<String, Object>> question;
+		Map<String, String> answer;
+		StringBuilder tempAnswerContent;
 		
 		ExamQuestiontype tempEqt;//试卷中题型
 		QuestionType tempQt;//题型实体
@@ -215,18 +220,26 @@ public class TestPaperController extends Logable{
 		StringBuilder imagesBase64=new StringBuilder();
 		
 		for(int i=1;i<=eqtCount;i++) {
+			question=new ArrayList<>();
+			answer=new HashMap<>();
+			tempAnswerContent=new StringBuilder();
+			
 			Map<String, Object> tempMap = new HashMap<>();
 			tempEqt=eqtList.get(i-1);//当前试题类型
 			tempQt=qtService.getQuestionTypeById(tempEqt.getQuestionTypeId().toString());
-			tempMap.put("fQId",Constants.numGetChinese(i));
-			tempMap.put("title",tempQt.gettTitle());
+			//tempMap.put("fQId",Constants.numGetChinese(i));
 			
 			qList=questionService.getQuestionsByEIdAndEQTId(eId, tempEqt.getQuestionTypeId());//当前试卷-题型下的题目（按照难易度排序）
+			
+			String title=Constants.numGetChinese(i)+"、"+tempQt.gettTitle()+"共"+qList.size()+"题，每题"+tempEqt.getTypeScore()+"分，共计"+qList.size()*tempEqt.getTypeScore()+"分";
+			tempMap.put("title",title);
+			answer.put("title", title);
+			
 			for(int j=1;j<qList.size();j++) {
 				Map<String, Object> tempQuestionMap=new HashMap<>();
-				tempQuestionMap.put("sQId", j);
-				//tempQuestionMap.put("content", qList.get(j).getqTitle());
-				question.add(tempQuestionMap);
+				
+				tempAnswerContent.append(j+"."+qList.get(j).getqAnswer());
+				
 				//处理的图片信息（总）
 				sb.append(qList.get(j).getqTitle());
 				
@@ -245,13 +258,19 @@ public class TestPaperController extends Logable{
 				
 				System.out.println("======tempContent==============");
 				System.out.println(tempContent);
-				tempQuestionMap.put("content",tempContent);
+				//--绑定题目序号和题目
+				String content=bindTitleAndNum(j+"",tempContent);
+				tempQuestionMap.put("content",content+"      ");
+				question.add(tempQuestionMap);
 			}
 			tempMap.put("question",question);
 			quesList.add(tempMap);
+			answer.put("content", tempAnswerContent.toString());
+			answerList.add(answer);
 		}
 		
 		resultMap.put("quesList", quesList);
+		resultMap.put("answerList", answerList);
 		
 		//题型-题目-答案
 //		contentMap.put("title","题目");
@@ -304,6 +323,17 @@ public class TestPaperController extends Logable{
 			
 	}
 	
+	//绑定题目序号和题目--找到第一个<p>标签，将序号加入
+	public String bindTitleAndNum(String num,String title) {
+		StringBuilder tempString=new StringBuilder();
+		int startIndex= title.indexOf("<p>");
+		tempString.append(title.substring(startIndex, startIndex+3));
+		tempString.append(num+".");
+		tempString.append(title.substring(startIndex+3));
+		System.out.println(tempString.toString());
+		return tempString.toString();
+	}
+	
 	//得到处理过的富文本信息
 	public Map<String, Object> getHandleredInfo(StringBuilder sb){
 		Map<String, Object> resultMap=new HashMap<>();
@@ -351,7 +381,6 @@ public class TestPaperController extends Logable{
 			resultMap.put("imagesXmlHrefString", imagesXmlHrefString.toString());
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -521,7 +550,6 @@ public class TestPaperController extends Logable{
 
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}finally {
 			
@@ -778,13 +806,11 @@ public class TestPaperController extends Logable{
 			List<KnowledgePoints> kps=kpService.getKnowledgePointsBySId(sId.toString());
 			for(KnowledgePoints kp:kps) {
 				allKpsList.add(kp.getkId());
+				}
 			}
-		}
-	*/
+		 */
 		List<Map<String, Object>> qtList=(List<Map<String, Object>>) request.get("qtList");	//各种题型的题目信息
-		/*for(Map<String, Object> map:list) {
-			System.out.println("qtId:"+map.get("qtId")+"  "+"qtNum:"+map.get("qtNum")+"  "+"qtScore:"+map.get("qtScore")+"  "+"qtOrder:"+map.get("qtOrder"));
-		}*/
+		
 		//存储各题型题目数量信息
 		for(Map<String, Object> map:qtList) {
 			qtList2.add(Long.parseLong(map.get("qtId").toString()));
@@ -850,7 +876,6 @@ public class TestPaperController extends Logable{
 			if(unitList.size()>=1) {
 				resultUnit=getMaxAdapterUnit(unitList);
 			}
-			
 		}else {
 			//没有得到结果，取初始群种中适应度最大的
 			resultUnit=resultUnitTemp;
@@ -862,11 +887,10 @@ public class TestPaperController extends Logable{
 			System.out.println("试卷id："+resultUnit.geteId());
 			System.out.println("题目数量\t知识点分布\t\t难度系数\t\t适应度");
 			System.out.println(resultUnit.getQuestionList().size()+"\t"+resultUnit.getKpCoverage()+"\t"+resultUnit.getDifficultyLevel()+"\t"+resultUnit.getAdapterDegree());
-			
 		}
 		
 		
-		//将产生的最终试卷存入数据库---未完成
+		//TODO 将产生的最终试卷存入数据库---未完成
 		
 		
 		
@@ -929,13 +953,13 @@ public class TestPaperController extends Logable{
 			 }
 			 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
 			error("服务器崩溃，生成试卷word格式失败，请重新尝试");
 			result.setRtnMessage("服务器崩溃，生成word格式失败，请重新尝试");
 			result.setRtnCode("-9999");
 			return result;
 		} catch (TemplateException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
 			error("服务器崩溃，生成试卷word格式失败，请重新尝试");
 			result.setRtnMessage("服务器崩溃，生成word格式失败，请重新尝试");
 			result.setRtnCode("-9999");

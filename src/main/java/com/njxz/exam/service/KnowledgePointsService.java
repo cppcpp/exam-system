@@ -6,6 +6,7 @@ import com.njxz.exam.modle.KnowledgePoints;
 
 public interface KnowledgePointsService {
 	public int add(KnowledgePoints knowledgePoints);
+	public List<KnowledgePoints> getKnowledgePointsBySIdPaging(String SId,int pageNum,int pageSize);
 	public List<KnowledgePoints> getKnowledgePointsBySId(String SId);
 	public int deleteByKId(String kId);
 	public KnowledgePoints getKnowledgePointsByKId(String KId);

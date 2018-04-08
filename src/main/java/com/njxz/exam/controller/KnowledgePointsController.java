@@ -83,13 +83,12 @@ public class KnowledgePointsController {
 			@RequestParam(value = "pageSize", required = false, defaultValue = "10") Integer pageSize, Model model) {
 		// 将sId保存在session中，重复使用（分页）
 		session.setAttribute("sId", sId);
-		// 开始分页
-		PageHelper.startPage(pageNum, pageSize);
-
+		
 		User user=(User) session.getAttribute("user");
 		// 需要将所有科目信息重新插一遍，为了减少查询，用缓存
 		List<Subject> listS = subjectService.getSubjectsByUId(user.getuId().toString());
-		List<KnowledgePoints> listKP = knowledgePointsService.getKnowledgePointsBySId(sId);
+		List<KnowledgePoints> listKP = knowledgePointsService.getKnowledgePointsBySIdPaging(sId,pageNum,pageSize);
+		
 		model.addAttribute("subjects", listS);
 		model.addAttribute("knowledgePoints", listKP);
 

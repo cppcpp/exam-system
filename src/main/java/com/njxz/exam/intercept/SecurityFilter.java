@@ -57,12 +57,17 @@ public class SecurityFilter implements Filter{
 						path.equals("/powerOff")||
 						path.equals("/user/personalInfo")||
 						path.equals("/user/modifyPassword")||
-						path.equals("/testPaper/**")||
-						path.equals("/knowledgePoints/**")||
-						path.equals("/questions/**")||
+						Pattern.compile("/testPaper/*").matcher(path).find()||
+						Pattern.compile("/knowledgePoints/*").matcher(path).find()||
+						path.equals("/questions/add")||
+						path.equals("/questions/subjects")||
+						path.equals("/questions/questionTypes")||
+						Pattern.compile("/questions/knowledgPoints/*").matcher(path).find()||
+						path.equals("/questions/qDiffLevel")||
 						path.equals("/user/add")||
 						path.equals("/user/all/1")) {
 					filterChain.doFilter(request, response);
+					return ;
 				}
 				
 				//无权访问页面

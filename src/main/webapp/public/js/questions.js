@@ -17,8 +17,7 @@ function getAllSubjects(){
 			url : "subjects",
 			method : "get",
 			success : function(data) {
-				// console.log("subjects:" + data.map + data.rtnCode + " " +
-				// data.rtnMessage);
+				//console.log("subjects:" + data.map + data.rtnCode + " " +data.rtnMessage);
 				var subjects=data.map.subjects;
 				
 				$("#subjectSelect").append("<option value=''>请选择科目</option>")
