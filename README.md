@@ -26,7 +26,8 @@
             * 数据库位于根目录file文件夹下，此外为毕设参考文档
             * 其余目录结构均为eclipse生成maven项目的目录结构
             * spring配置文件地址：根目录/WEB-INF/config/spring/
-            * 其余配置文件地址：src/main/resources/
+            * 生成word所用模板文件：/wordTemplete/examTest.ftl
+            * 其余配置文件地址：src/main/resources/
             
 #### 部分页面展示
 ![登录页面](https://github.com/cppcpp/exam-system/raw/master/src/main/webapp/public/images/1.png)
