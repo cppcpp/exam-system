@@ -15,20 +15,20 @@
     </bean>  
     <!-- 1.配置数据源 -->
 	<bean id="mysqlSource" class="org.apache.commons.dbcp2.BasicDataSource">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
-		<property name="url" value="jdbc:mysql://localhost:3306/exam-system-db"></property>
-		<property name="username" value="root"></property>
-		<property name="password" value="cpprootmysql"></property>
+		<property name="driverClassName" value="${jdbc.driver}"></property>
+		<property name="url" value="${jdbc.url}"></property>
+		<property name="username" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
 		<!-- 初始连接数 default 0 -->
-		<property name="initialSize" value="5" />
+		<property name="initialSize" value="${initialSize}" />
 		<!-- 可以同时从该连接池分配的最大活动连接数  default 8-->
-		<property name="maxTotal" value="10" />
+		<property name="maxTotal" value="${maxTotal}" />
 		<!--在池中可以保持空闲的最大数量 default 8 -->
-		<property name="maxIdle" value="10" />
+		<property name="maxIdle" value="${maxIdle}" />
 		<!-- 保持空闲的最小连接数  default0-->
-		<property name="minIdle" value="2" />
+		<property name="minIdle" value="${minIdle}" />
 		<!-- 抛出异常钱的最大等待时间  default 无限期-->
-		<property name="maxWaitMillis" value="6000"/>
+		<property name="maxWaitMillis" value="${maxWaitMillis}"/>
 	</bean>
 	
 	<!-- 创建session工厂 基础mybatis中，用SqlSessionFactoryBuilder来创建 -->

@@ -48,4 +48,10 @@ public class ExamQuestiontypeServiceImpl implements ExamQuestiontypeService{
 		return eqtMapper.deleteExamQuestiontypesByEId(eId);
 	}
 
+	@Override
+	public int modifyQTOrder(Long eId, Long qtId, int order) {
+		// TODO Auto-generated method stub
+		return eqtMapper.modifyQTOrder(eId, qtId, order);
+	}
+
 }

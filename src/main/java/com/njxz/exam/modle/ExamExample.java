@@ -415,63 +415,123 @@ public class ExamExample {
             return (Criteria) this;
         }
 
-        public Criteria andEDifficultyLevelIsNull() {
-            addCriterion("e_difficulty_level is null");
+        public Criteria andEDifficultyLevelAIsNull() {
+            addCriterion("e_difficulty_level_a is null");
             return (Criteria) this;
         }
 
-        public Criteria andEDifficultyLevelIsNotNull() {
-            addCriterion("e_difficulty_level is not null");
+        public Criteria andEDifficultyLevelAIsNotNull() {
+            addCriterion("e_difficulty_level_a is not null");
             return (Criteria) this;
         }
 
-        public Criteria andEDifficultyLevelEqualTo(Double value) {
-            addCriterion("e_difficulty_level =", value, "eDifficultyLevel");
+        public Criteria andEDifficultyLevelAEqualTo(Double value) {
+            addCriterion("e_difficulty_level_a =", value, "eDifficultyLevelA");
             return (Criteria) this;
         }
 
-        public Criteria andEDifficultyLevelNotEqualTo(Double value) {
-            addCriterion("e_difficulty_level <>", value, "eDifficultyLevel");
+        public Criteria andEDifficultyLevelANotEqualTo(Double value) {
+            addCriterion("e_difficulty_level_a <>", value, "eDifficultyLevelA");
             return (Criteria) this;
         }
 
-        public Criteria andEDifficultyLevelGreaterThan(Double value) {
-            addCriterion("e_difficulty_level >", value, "eDifficultyLevel");
+        public Criteria andEDifficultyLevelAGreaterThan(Double value) {
+            addCriterion("e_difficulty_level_a >", value, "eDifficultyLevelA");
             return (Criteria) this;
         }
 
-        public Criteria andEDifficultyLevelGreaterThanOrEqualTo(Double value) {
-            addCriterion("e_difficulty_level >=", value, "eDifficultyLevel");
+        public Criteria andEDifficultyLevelAGreaterThanOrEqualTo(Double value) {
+            addCriterion("e_difficulty_level_a >=", value, "eDifficultyLevelA");
             return (Criteria) this;
         }
 
-        public Criteria andEDifficultyLevelLessThan(Double value) {
-            addCriterion("e_difficulty_level <", value, "eDifficultyLevel");
+        public Criteria andEDifficultyLevelALessThan(Double value) {
+            addCriterion("e_difficulty_level_a <", value, "eDifficultyLevelA");
             return (Criteria) this;
         }
 
-        public Criteria andEDifficultyLevelLessThanOrEqualTo(Double value) {
-            addCriterion("e_difficulty_level <=", value, "eDifficultyLevel");
+        public Criteria andEDifficultyLevelALessThanOrEqualTo(Double value) {
+            addCriterion("e_difficulty_level_a <=", value, "eDifficultyLevelA");
             return (Criteria) this;
         }
 
-        public Criteria andEDifficultyLevelIn(List<Double> values) {
-            addCriterion("e_difficulty_level in", values, "eDifficultyLevel");
+        public Criteria andEDifficultyLevelAIn(List<Double> values) {
+            addCriterion("e_difficulty_level_a in", values, "eDifficultyLevelA");
             return (Criteria) this;
         }
 
-        public Criteria andEDifficultyLevelNotIn(List<Double> values) {
-            addCriterion("e_difficulty_level not in", values, "eDifficultyLevel");
+        public Criteria andEDifficultyLevelANotIn(List<Double> values) {
+            addCriterion("e_difficulty_level_a not in", values, "eDifficultyLevelA");
             return (Criteria) this;
         }
 
-        public Criteria andEDifficultyLevelBetween(Double value1, Double value2) {
-            addCriterion("e_difficulty_level between", value1, value2, "eDifficultyLevel");
+        public Criteria andEDifficultyLevelABetween(Double value1, Double value2) {
+            addCriterion("e_difficulty_level_a between", value1, value2, "eDifficultyLevelA");
             return (Criteria) this;
         }
 
-        public Criteria andEDifficultyLevelNotBetween(Double value1, Double value2) {
-            addCriterion("e_difficulty_level not between", value1, value2, "eDifficultyLevel");
+        public Criteria andEDifficultyLevelANotBetween(Double value1, Double value2) {
+            addCriterion("e_difficulty_level_a not between", value1, value2, "eDifficultyLevelA");
+            return (Criteria) this;
+        }
+
+        public Criteria andEDifficultyLevelBIsNull() {
+            addCriterion("e_difficulty_level_b is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEDifficultyLevelBIsNotNull() {
+            addCriterion("e_difficulty_level_b is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andEDifficultyLevelBEqualTo(Double value) {
+            addCriterion("e_difficulty_level_b =", value, "eDifficultyLevelB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEDifficultyLevelBNotEqualTo(Double value) {
+            addCriterion("e_difficulty_level_b <>", value, "eDifficultyLevelB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEDifficultyLevelBGreaterThan(Double value) {
+            addCriterion("e_difficulty_level_b >", value, "eDifficultyLevelB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEDifficultyLevelBGreaterThanOrEqualTo(Double value) {
+            addCriterion("e_difficulty_level_b >=", value, "eDifficultyLevelB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEDifficultyLevelBLessThan(Double value) {
+            addCriterion("e_difficulty_level_b <", value, "eDifficultyLevelB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEDifficultyLevelBLessThanOrEqualTo(Double value) {
+            addCriterion("e_difficulty_level_b <=", value, "eDifficultyLevelB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEDifficultyLevelBIn(List<Double> values) {
+            addCriterion("e_difficulty_level_b in", values, "eDifficultyLevelB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEDifficultyLevelBNotIn(List<Double> values) {
+            addCriterion("e_difficulty_level_b not in", values, "eDifficultyLevelB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEDifficultyLevelBBetween(Double value1, Double value2) {
+            addCriterion("e_difficulty_level_b between", value1, value2, "eDifficultyLevelB");
+            return (Criteria) this;
+        }
+
+        public Criteria andEDifficultyLevelBNotBetween(Double value1, Double value2) {
+            addCriterion("e_difficulty_level_b not between", value1, value2, "eDifficultyLevelB");
             return (Criteria) this;
         }
 

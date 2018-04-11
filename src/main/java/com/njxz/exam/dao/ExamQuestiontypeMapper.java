@@ -33,4 +33,6 @@ public interface ExamQuestiontypeMapper {
     List<ExamQuestiontype> allExamQuestiontypes(@Param("eId")Long eId);
     
     int deleteExamQuestiontypesByEId(@Param("eId")Long eId);
+    
+    int modifyQTOrder(@Param("eId")Long eId,@Param("qtId")Long qtId,@Param("order")int order);
 }

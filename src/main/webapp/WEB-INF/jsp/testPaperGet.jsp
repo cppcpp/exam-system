@@ -459,7 +459,7 @@
 								<c:forEach items="${examList}" var="exam">
 									<tr>
 										<td>${exam.eTitle}</td>
-										<td>${exam.eDifficulty}</td>
+										<td>${exam.eDifficultyA} | ${exam.eDifficultyB}</td>
 										<td>${exam.subjectTitle}</td>
 										<td>${exam.userName}</td>
 										<td>${exam.addTime}</td>
@@ -471,7 +471,7 @@
 											<a href='${exam.eAddressB}'>B卷</a>
 										</c:if>
 										</td>
-										<td><a href="">修改</a>|<a href="deleteExam/${exam.eId}">删除</a></td>
+										<td><a href="modify/${exam.eId}">修改</a>|<a href="deleteExam/${exam.eId}">删除</a></td>
 									</tr>
 								</c:forEach>
 							</c:if>

@@ -190,13 +190,9 @@ public class QuestionServiceImpl implements QuestionService {
 	}
 
 	@Override
-	public List<Questions> getQuestionsByEIdAndEQTId(Long eId, Long eqtId) {
+	public List<Questions> getQuestionsByEIdAndEQTId(Long eId, Long eqtId,int eType) {
 		// TODO Auto-generated method stub
-		return mapper.getQuestionsByEIdAndEQTId(eId, eqtId);
+		return mapper.getQuestionsByEIdAndEQTId(eId, eqtId,eType);
 	}
-
-	
-
-	
 
 }

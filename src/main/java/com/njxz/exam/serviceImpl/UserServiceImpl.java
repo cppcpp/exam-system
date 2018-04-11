@@ -4,12 +4,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import com.njxz.exam.dao.UserMapper;
+import com.njxz.exam.dao.UserSubjectMapper;
 import com.njxz.exam.modle.User;
 import com.njxz.exam.modle.UserExample;
 import com.njxz.exam.modle.UserExample.Criteria;
+import com.njxz.exam.modle.UserSubjectExample;
 import com.njxz.exam.service.UserService;
 import com.njxz.exam.service.UserSubjectService;
 
@@ -19,6 +22,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserMapper userMapper;
+	
+	@Autowired
+	private UserSubjectMapper usMapper;
 
 	public List<User> getAllUser() {
 		// TODO Auto-generated method stub
@@ -64,6 +70,26 @@ public class UserServiceImpl implements UserService {
 		Criteria criteria= example.createCriteria();
 		criteria.andPowerEqualTo(new Byte((byte)power));
 		return userMapper.selectByExample(example);
+	}
+
+	@Override
+	@Transactional
+	public boolean deleteUser(Long uId) {
+		
+		try {
+			if(userMapper.deleteByPrimaryKey(uId)!=1) {
+				return false;
+			}
+			UserSubjectExample usExample=new UserSubjectExample();
+			com.njxz.exam.modle.UserSubjectExample.Criteria criteria=usExample.createCriteria();
+			criteria.andUserIdEqualTo(uId);
+			usMapper.deleteByExample(usExample);
+			return true;
+		}catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		
 	}
 
 }

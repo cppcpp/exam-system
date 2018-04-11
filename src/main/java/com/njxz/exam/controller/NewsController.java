@@ -25,6 +25,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.StringUtil;
 import com.njxz.exam.modle.News;
+import com.njxz.exam.modle.User;
 import com.njxz.exam.service.NewsService;
 import com.njxz.exam.service.UserService;
 import com.njxz.exam.util.ErrorUtil;
@@ -92,8 +93,12 @@ public class NewsController {
 			map.put("userId", news.getUserId());
 			//添加人姓名
 			if(news.getUserId()!=null) {
-				String name=us.findUser(news.getUserId().toString()).getName();
-				map.put("userName",name);
+				User user=us.findUser(news.getUserId().toString());
+				if(user!=null) {
+					map.put("userName",user.getName());
+				}else {
+					map.put("userName", "该用户已注销");
+				}
 			}else {
 				map.put("userName","");
 			}

@@ -455,7 +455,7 @@
 					<!-- 内容主体开始 -->
 					<div class="span12">
 					<c:if test="${questionModifyError!=null}">
-						<c:out value="${questionModifyError}" class="error"/>
+						<c:out value="${questionModifyError}"/>
 					</c:if>
 					<sf:form commandName="questions">
 						<sf:label cssErrorClass="error" path="qId">id:</sf:label>

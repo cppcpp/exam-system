@@ -8,11 +8,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
+import org.springframework.http.HttpRequest;
+import org.springframework.security.concurrent.DelegatingSecurityContextExecutorService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -146,9 +149,9 @@ public class UserController extends Logable {
 		}
 		
 		//设置parentId和registTime
-		//管理员的parentId为0
+		//管理员的parentId为99999
 		if(user.getPower()==3) {
-			user.setParentId(new Long(0));
+			user.setParentId(new Long(99999));
 		}else {
 			user.setParentId(sessionUser.getuId());
 		}
@@ -227,7 +230,7 @@ public class UserController extends Logable {
 			tempMap.put("parentId", String.valueOf(user.getParentId()));
 			
 			intTemp=user.getParentId();
-			//int 默认 0,管理员parentId=9999
+			//int 默认 0,管理员parentId=99999
 			if(intTemp!=0) {
 				userTemp=userService.findUser(intTemp.toString());
 				if(userTemp!=null) {
@@ -259,7 +262,9 @@ public class UserController extends Logable {
 			
 			strTemp="";
 			for(Subject subject:subjectList) {
-				strTemp+=subject.getsTitle()+"、";
+				if(subject!=null) {
+					strTemp+=subject.getsTitle()+"、";
+				}
 			}
 			tempMap.put("subjects", strTemp);
 		
@@ -380,17 +385,87 @@ public class UserController extends Logable {
 	}
 	
 	
+	//删除用户
+	@RequestMapping("/delete/{uId}")
+	public ModelAndView deleteUser(@PathVariable("uId")Long uId) {
+		ModelAndView mav=new ModelAndView();
+		User user=userService.findUser(uId.toString());
+		if(!userService.deleteUser(uId)) {
+			mav.addObject("deleteUserError", "删除用户失败");
+		}
+		mav.setViewName("redirect:/user/all/"+user.getPower());
+		return mav;
+	}
 	
+	//个人信息修改模块
 	@RequestMapping(value="/personalInfo",method=RequestMethod.GET)
-	public String userPersonalInfo() {
+	public ModelAndView userPersonalInfo() {
+		ModelAndView mav=new ModelAndView();
+		Map<String,String> map=new HashMap<>();
+		List<Subject> subjectList=null;
+		String strTemp="";
+
+		User user=(User) session.getAttribute("user");
+		if(user==null) {
+			mav.addObject("userNotLogin", "用户还未登录");
+			return mav;
+		}
 		
-		return "userPersonalInfo";
+		//人员角色
+		map.put("userName", user.getName());
+		if(user.getPower()!=0) {
+			strTemp=user.getPower()==1?"录入人员":user.getPower()==2?"教师":user.getPower()==3?"管理员":"";
+		}else {
+			strTemp="";
+		}
+		map.put("role", strTemp);
+		
+		//人员管理科目
+		if(user.getPower()==3) {
+			subjectList=subjectService.selectAllSubject();
+		}else {
+			subjectList=subjectService.getSubjectsByUId(user.getuId().toString());
+		}
+		strTemp="";
+		for(Subject subject:subjectList) {
+			if(subject!=null) {
+				strTemp+=subject.getsTitle()+"、";
+			}
+		}
+		map.put("subjects", strTemp);
+		
+		//人员直接上级
+		User parentUser=userService.findUser(user.getParentId().toString());
+		if(parentUser!=null) {
+			map.put("parentName", parentUser.getName());
+		}else {
+			map.put("parentName", "");
+		}
+		
+		mav.addObject("user", map);
+		mav.setViewName("userPersonalInfo");
+		return mav;
 	}
 	
 	@RequestMapping(value="/modifyPassword",method=RequestMethod.GET)
 	public String modifyPasswordPage() {
-		
 		return "userModifyPassword";
+	}
+	
+	@RequestMapping(value="/modifyPassword",method=RequestMethod.POST)
+	public ModelAndView modifyPassword(HttpServletRequest request) {
+		ModelAndView mav=new  ModelAndView();
+		String password=request.getParameter("password");
+		String md5Password=StringUtil.EncoderByMd5(password);
+		User user=(User) session.getAttribute("user");
+		user.setPassword(md5Password);
+		if(userService.updateUser(user)!=1) {
+			mav.addObject("modifyUserError","修改用户失败");
+		}else {
+			mav.addObject("modifyUserSuccess", "修改用户成功");
+		}
+		mav.setViewName("userModifyPassword");
+		return mav;
 	}
 	
 	@RequestMapping(value="logout")

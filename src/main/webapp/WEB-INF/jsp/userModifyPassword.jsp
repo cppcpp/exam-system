@@ -441,9 +441,20 @@
 				<!-- BEGIN PAGE CONTENT-->
 
 				<div class="row-fluid">
+				
 					<!-- 内容主体 -->
 					<div class="span12">
-		
+					<c:if test="${modifyUserError!=null}">
+						<c:out value="${modifyUserError}" />
+					</c:if>
+					<c:if test="${modifyUserSuccess!=null}">
+						<c:out value="${modifyUserSuccess}" />
+					</c:if>
+					
+						<form action="modifyPassword" method='post'>
+							密码：<input type="password" name="password"></br>
+							<input type="submit" class="btn" value="修改">
+						</form>
 					</div><!-- 内容主体 -->
 
 				</div>

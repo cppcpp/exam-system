@@ -1,7 +1,6 @@
 package com.njxz.exam.controller;
 
 
-import static org.mockito.Matchers.contains;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -115,7 +114,12 @@ public class TestPaperController extends Logable{
 			tempMap.put("eId", exam.geteId().toString());
 			tempMap.put("addTime", sdFormat.format(exam.geteAddTime()));
 			tempMap.put("eTitle", exam.geteTitle());
-			tempMap.put("eDifficulty", dformat.format(exam.geteDifficultyLevel()));
+			tempMap.put("eDifficultyA", dformat.format(exam.geteDifficultyLevelA()));
+			if(exam.geteDifficultyLevelB()!=null) {
+				tempMap.put("eDifficultyB", dformat.format(exam.geteDifficultyLevelB()));
+			}else {
+				tempMap.put("eDifficultyB", "");
+			}
 			tempMap.put("eAddressA", exam.geteAddressA());
 			tempMap.put("eAddressB",exam.geteAddressB());
 			//A卷B卷
@@ -131,7 +135,12 @@ public class TestPaperController extends Logable{
 				tempMap.put("subjectTitle", SubjectService.getSubjectById(exam.getSubjectId()).getsTitle());
 			}
 			if(exam.getUserId()!=null) {
-				tempMap.put("userName", userService.findUser(exam.getUserId().toString()).getName());
+				User user2=userService.findUser(exam.getUserId().toString());
+				if(user2!=null) {
+					tempMap.put("userName", user2.getName());
+				}else {
+					tempMap.put("userName", "该用户已注销");
+				}
 			}
 			
 			
@@ -154,7 +163,6 @@ public class TestPaperController extends Logable{
 	public boolean exportWord(Long eId,int eType) throws IOException, TemplateException {
 		String directoryName=Constants.WORD_TEMPLETE_DIRECTORY_NAME;
 		Map<String,Object> resultMap=new HashMap<>();
-		//Map<String, String> contentMap=new HashMap<>();
 		
 		//模板存放的实际地址
 		String t=request.getSession().getServletContext().getRealPath("");
@@ -213,44 +221,48 @@ public class TestPaperController extends Logable{
 		QuestionType tempQt;//题型实体
 		List<Questions> qList;//试题列表
 		String tempContent;String tempImagesXmlHref;String tempImagesBase64;
-		Map<String, Object> tmepResultMapMap=null;
+		Map<String, Object> tmepResultMap=null;
 		
 		StringBuilder sb = new StringBuilder();
 		StringBuilder imagesXmlHrefString=new StringBuilder();
 		StringBuilder imagesBase64=new StringBuilder();
+		Map<String, Object> tempQuestionMap;//临时存放问题详情Map
+		Map<String, Object> tempMap;//临时存放试卷中所有题型
 		
 		for(int i=1;i<=eqtCount;i++) {
 			question=new ArrayList<>();
 			answer=new HashMap<>();
 			tempAnswerContent=new StringBuilder();
 			
-			Map<String, Object> tempMap = new HashMap<>();
+			tempMap = new HashMap<>();
 			tempEqt=eqtList.get(i-1);//当前试题类型
 			tempQt=qtService.getQuestionTypeById(tempEqt.getQuestionTypeId().toString());
 			//tempMap.put("fQId",Constants.numGetChinese(i));
 			
-			qList=questionService.getQuestionsByEIdAndEQTId(eId, tempEqt.getQuestionTypeId());//当前试卷-题型下的题目（按照难易度排序）
+			qList=questionService.getQuestionsByEIdAndEQTId(eId, tempEqt.getQuestionTypeId(),eType);//当前试卷-题型下的题目（按照难易度排序）
 			
 			String title=Constants.numGetChinese(i)+"、"+tempQt.gettTitle()+"共"+qList.size()+"题，每题"+tempEqt.getTypeScore()+"分，共计"+qList.size()*tempEqt.getTypeScore()+"分";
 			tempMap.put("title",title);
 			answer.put("title", title);
 			
-			for(int j=1;j<qList.size();j++) {
-				Map<String, Object> tempQuestionMap=new HashMap<>();
+			for(int j=1;j<=qList.size();j++) {
+				tempQuestionMap=new HashMap<>();
 				
-				tempAnswerContent.append(j+"."+qList.get(j).getqAnswer());
-				
+				tempAnswerContent.append(j+"."+qList.get(j-1).getqAnswer());
+				if(!qList.get(j-1).getqAnswer().contains("<p>")) {
+					tempAnswerContent.append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+				}
 				//处理的图片信息（总）
-				sb.append(qList.get(j).getqTitle());
+				sb.append(qList.get(j-1).getqTitle());
 				
 				StringBuilder sbTemp=new StringBuilder();
-				sbTemp.append(qList.get(j).getqTitle());
+				sbTemp.append(qList.get(j-1).getqTitle());
 				
 				//处理数据库中富文本
-				tmepResultMapMap=getHandleredInfo(sbTemp);
-				tempContent=tmepResultMapMap.get("docBodyBlock").toString();
-				tempImagesXmlHref=tmepResultMapMap.get("imagesXmlHrefString").toString();
-				tempImagesBase64=tmepResultMapMap.get("iamgebase64").toString();
+				tmepResultMap=getHandleredInfo(sbTemp);
+				tempContent=tmepResultMap.get("docBodyBlock").toString();
+				tempImagesXmlHref=tmepResultMap.get("imagesXmlHrefString").toString();
+				tempImagesBase64=tmepResultMap.get("iamgebase64").toString();
 				
 				//所有的图片信息以及图片链接信息
 				imagesXmlHrefString.append(tempImagesXmlHref);
@@ -260,7 +272,7 @@ public class TestPaperController extends Logable{
 				System.out.println(tempContent);
 				//--绑定题目序号和题目
 				String content=bindTitleAndNum(j+"",tempContent);
-				tempQuestionMap.put("content",content+"      ");
+				tempQuestionMap.put("content",content);
 				question.add(tempQuestionMap);
 			}
 			tempMap.put("question",question);
@@ -291,10 +303,15 @@ public class TestPaperController extends Logable{
 		//Configuration用于读取ftl文件
 		Configuration configuration=new Configuration();
 		configuration.setDefaultEncoding("utf-8");
-		
         
 		configuration.setDirectoryForTemplateLoading(new File(realPath));
-		File outFile=new File(realPath+"\\"+eId+"test.doc");
+		
+		File outFile=null;
+		if(eType==0) {
+			outFile=new File(realPath+"\\"+eId+"A.doc");
+		}else if(eType==1) {
+			outFile=new File(realPath+"\\"+eId+"B.doc");
+		}
 		
 		//以utf-8编码读取ftl文件
 		Template template=configuration.getTemplate("examTest.ftl","utf-8");
@@ -306,12 +323,10 @@ public class TestPaperController extends Logable{
 		
 		//将生成的word地址存入Exam中
 		if(eType==0) {
-			exam.seteAddressA("http://localhost:8080/wordTemplete/"+eId+"test.doc");
-			exam.seteAddressB("");
+			exam.seteAddressA("http://localhost:8080/wordTemplete/"+eId+"A.doc");
 		}
 		if(eType==1) {
-			exam.seteAddressB("http://localhost:8080/wordTemplete/"+eId+"test.doc");
-			exam.seteAddressA("");
+			exam.seteAddressB("http://localhost:8080/wordTemplete/"+eId+"B.doc");
 		}
 		
 		//更新
@@ -326,11 +341,14 @@ public class TestPaperController extends Logable{
 	//绑定题目序号和题目--找到第一个<p>标签，将序号加入
 	public String bindTitleAndNum(String num,String title) {
 		StringBuilder tempString=new StringBuilder();
-		int startIndex= title.indexOf("<p>");
-		tempString.append(title.substring(startIndex, startIndex+3));
-		tempString.append(num+".");
-		tempString.append(title.substring(startIndex+3));
-		System.out.println(tempString.toString());
+		if(title.contains("<p>")) {
+			int startIndex= title.indexOf("<p>");
+			tempString.append(title.substring(startIndex, startIndex+3));
+			tempString.append(num+".");
+			tempString.append(title.substring(startIndex+3));
+		}else {
+			tempString.append(num+"."+title);
+		}
 		return tempString.toString();
 	}
 	
@@ -780,13 +798,14 @@ public class TestPaperController extends Logable{
 	
 	//自动生成试卷
 	@RequestMapping(value="/generatePaperAuto",method=RequestMethod.POST)
+	@ResponseBody
 	public Result generatePaperAuto(@RequestBody Map<String,Object> request) {
 		Result result=new Result();
-		List<Long> qtList2=new ArrayList<>();
-		//List<Long> allKpsList=new ArrayList<>();//存储所有的知识点
+		List<Long> qtList2=new ArrayList<>();//存储前台题型
 		
 		String paperName=request.get("paperName").toString();
-		double paperDiffLev=Double.parseDouble(request.get("paperDiffLev").toString());
+		double paperDiffLevA=Double.parseDouble(request.get("paperDiffLevA").toString());
+		double paperDiffLevB=Double.parseDouble(request.get("paperDiffLevB").toString());
 		int totalScore=Integer.parseInt(request.get("totalScore").toString());
 		Long sId=Long.parseLong(request.get("sId").toString());
 		List<Object> kpsList = (List<Object>) request.get("kps");//知识点的list--知识点不重复
@@ -794,21 +813,10 @@ public class TestPaperController extends Logable{
 		
 		//不允许知识点重复----hashSet根据值的hashCode值判断是否重复，放到HashMap中
 		Set<Long> kpsSet=new HashSet<>();  
-		//---------------强制类型转换错---------------
 		for(int i=0;i<kpsList.size();i++) {
-			//System.out.println(kpsList.get(i));
-			//System.out.println(kpsList.get(i).getClass().toSt ring());
 			kpsSet.add(Long.parseLong(kpsList.get(i).toString()));
 		}   
-		
-		//如果知识点为空的话,存储当前科目下所有的知识点信息
-		/*if(kpsList==null) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-			List<KnowledgePoints> kps=kpService.getKnowledgePointsBySId(sId.toString());
-			for(KnowledgePoints kp:kps) {
-				allKpsList.add(kp.getkId());
-				}
-			}
-		 */
+	
 		List<Map<String, Object>> qtList=(List<Map<String, Object>>) request.get("qtList");	//各种题型的题目信息
 		
 		//存储各题型题目数量信息
@@ -819,81 +827,71 @@ public class TestPaperController extends Logable{
 		//取出题库中  当前科目-知识点-题型下的题目012
 		List<Questions> questionsDB=questionService.checkAllQuesByKpsAndQtAndDl(sId,kpsList1,qtList2,null);
 		//实例化期望的试卷信息
-		TempExam expectedExam=new TempExam(StringUtil.seqGenerate(), totalScore, paperDiffLev, kpsSet,qtList);
+		TempExam expectedExamA=new TempExam(StringUtil.seqGenerate(), totalScore, paperDiffLevA, kpsSet,qtList);
+		TempExam expectedExamB=new TempExam(StringUtil.seqGenerate(), totalScore, paperDiffLevB, kpsSet,qtList);
 		
-		//最终试题
-		TempExam resultUnit=null,resultUnitTemp=null;
+		//遗传算法
+		TempExam resultUnitA= geneticAlgorithm(questionsDB,expectedExamA);
+		TempExam resultUnitB= geneticAlgorithm(questionsDB,expectedExamB);
 		
-		//迭代次数计数器
-		int count=1;
-		
-		//初始化种群
-		List<TempExam> unitList=generatePaperService.cszq(20, expectedExam, questionsDB);
-		resultUnitTemp=getMaxAdapterUnit(unitList);
-		System.out.println("----------------遗传算法组卷---------------------------------------");
-		System.out.println("初始种群-------------");
-		showUnit(unitList);
-		System.out.println("-----------------------开始迭代-------------------------");
-		
-		boolean flag=false;
-		while(!generatePaperService.isEnd(unitList, Constants.EXPAND_ADATPER)) {
-			System.out.println("在"+(count++)+"代未得到结果----------"+unitList.size()+"------------------");
-			
-			if(count>Constants.RUN_Count) {
-				System.out.println("计算"+Constants.RUN_Count+"代仍没有结果，请重新设置条件");
-				break;
+		Long eId=StringUtil.seqGenerate();
+		User user=(User) session.getAttribute("user");
+		int paperTotalScoreA=resultUnitA.getTotalScore();
+		int paperTotalScoreB=resultUnitB.getTotalScore();
+		double paperDifficuttyA=resultUnitA.getDifficultyLevel();
+		double paperDifficuttyB=resultUnitB.getDifficultyLevel();
+		List<Long> qIdListA=new ArrayList<>();//A卷所有试题Id
+		List<Long> qIdListB=new ArrayList<>();//B卷所有试题Id
+		for(Questions questions:resultUnitA.getQuestionList()) {
+			qIdListA.add(questions.getqId());
+		}
+		for(Questions questions:resultUnitB.getQuestionList()) {
+			qIdListB.add(questions.getqId());
+		}
+
+		try {
+			//TODO 将产生的最终试卷存入数据库--A卷  B卷
+			if(!examService.inToDB(eId,user.getuId(),paperName,paperTotalScoreA,paperDifficuttyA,(byte)0,sId,qIdListA,qtList)||
+					!examService.inToDB(eId,user.getuId(),paperName,paperTotalScoreB,paperDifficuttyB,(byte)1,sId,qIdListB,qtList)) {
+				error("服务器崩溃，添加试卷信息失败，请重新尝试");
+				result.setRtnMessage("服务器崩溃，添加试卷信息失败，请重新尝试");
+				result.setRtnCode("-9999");
+				return result ;
 			}
-			
-			//经过选择、交叉后种群数量只剩1或只剩0退出
-			if(unitList.size()<=1) {
-				System.out.println("没有结果");
-				flag=true;
-				break;
-			}
-			
-			//选择--个数一定小于初始化种群
-			unitList=generatePaperService.select(unitList, 10);
-			
-			//交叉
-			unitList=generatePaperService.cross(unitList, 20, expectedExam);
-			
-			//判断是否可以结束
-			if(generatePaperService.isEnd(unitList, Constants.EXPAND_ADATPER)) {
-				break;
-			}
-			
-			//变异
-			unitList=generatePaperService.change(unitList, questionsDB, expectedExam);
+		}catch(Exception e) {
+			error("服务器崩溃，添加试卷信息失败，请重新尝试");
+			result.setRtnMessage("服务器崩溃，添加试卷信息失败，请重新尝试");
+			result.setRtnCode("-9999");
+			//打印错误栈日志
+			e.printStackTrace();
+			return result ;
 		}
 		
-		if(count<=Constants.RUN_Count&&flag==false) {
-			System.out.println("在第"+count+"代得到结果，结果为：**********************************");
-			System.out.println("期望难度系数："+expectedExam.getDifficultyLevel());
-			
-			showResult(unitList,Constants.EXPAND_ADATPER);
-			
-			//如果有多个，取适应度最大的
-			if(unitList.size()>=1) {
-				resultUnit=getMaxAdapterUnit(unitList);
-			}
-		}else {
-			//没有得到结果，取初始群种中适应度最大的
-			resultUnit=resultUnitTemp;
+		//生成word文档
+		try {
+			 if(!exportWord(eId,0)||!exportWord(eId,1)) {
+				 error("服务器崩溃，生成word格式失败，请重新尝试");
+				 result.setRtnMessage("服务器崩溃，生成word格式失败，请重新尝试");
+				 result.setRtnCode("-9999");
+				 return result;
+			 }
+			 
+		} catch (IOException e) {
+			e.printStackTrace();
+			error("服务器崩溃，生成试卷word格式失败，请重新尝试");
+			result.setRtnMessage("服务器崩溃，生成word格式失败，请重新尝试");
+			result.setRtnCode("-9999");
+			return result;
+		} catch (TemplateException e) {
+			e.printStackTrace();
+			error("服务器崩溃，生成试卷word格式失败，请重新尝试");
+			result.setRtnMessage("服务器崩溃，生成word格式失败，请重新尝试");
+			result.setRtnCode("-9999");
+			return result;
 		}
 		
-		//最终结果试题
-		System.out.println("!!!!!!!!!!!!!!!!!!!!!最终试题！！！！！！！！！！！！！！！！！！！！！！！");
-		if(resultUnit!=null) {
-			System.out.println("试卷id："+resultUnit.geteId());
-			System.out.println("题目数量\t知识点分布\t\t难度系数\t\t适应度");
-			System.out.println(resultUnit.getQuestionList().size()+"\t"+resultUnit.getKpCoverage()+"\t"+resultUnit.getDifficultyLevel()+"\t"+resultUnit.getAdapterDegree());
-		}
-		
-		
-		//TODO 将产生的最终试卷存入数据库---未完成
-		
-		
-		
+		result.setRtnMessage("试卷生成成功，前往下载试卷");
+		result.setRtnCode("0");
 		return result;
 	}
 	
@@ -968,7 +966,7 @@ public class TestPaperController extends Logable{
 		
 		result.setRtnMessage("试卷生成成功，前往下载试卷");
 		result.setRtnCode("0");
-		return result ;
+		return result;
 	}
 	
 	//删除试卷--exam--exam_questiontype--exam_questions
@@ -980,6 +978,137 @@ public class TestPaperController extends Logable{
 		
 		return "redirect:/testPaper/get";
 	}
+	
+	//修改试卷Page
+	@RequestMapping(value="/modify/{eId}",method=RequestMethod.GET)
+	public ModelAndView modifyExamPage(@PathVariable("eId")Long eId) {
+		ModelAndView mav=new ModelAndView();
+		Exam exam=examService.get(eId);
+		List<ExamQuestiontype> eqtList=eqtService.allExamQuestiontypes(eId);
+		mav.addObject("exam",exam);
+		mav.addObject("totalEQT",eqtList.size());
+		List<Map<String,String>> orderList=new ArrayList<>();
+		Map<String, String> tempMap;
+		QuestionType tempQuestiontype;
+		for(ExamQuestiontype eqt:eqtList) {
+			tempMap=new HashMap<>();
+			tempQuestiontype=qtService.getQuestionTypeById(eqt.getQuestionTypeId().toString());
+			
+			tempMap.put("qtTitle",tempQuestiontype.gettTitle());
+			tempMap.put("qtId",tempQuestiontype.gettId().toString());
+			tempMap.put("qtOrder", eqt.getTypeSort().toString());
+			orderList.add(tempMap);
+		}
+		mav.addObject("orderList", orderList);
+		mav.setViewName("testPaperModify");
+		return mav;
+	}
+	
+	@RequestMapping(value="/modify/{eId}",method=RequestMethod.POST)
+	@ResponseBody
+	public String modifyExam(@PathVariable("eId")Long eId,
+			@RequestBody Map<String,Object> req) {
+		String eTitle=req.get("eTitle").toString();
+		List<Map<String, String>> orderList=(List<Map<String, String>>) req.get("eOrder");
+		
+		Exam exam=examService.get(eId);
+		exam.seteTitle(eTitle);
+		if(examService.updateByPrimaryKey(exam)!=1) {
+			return "modifyExamError";
+		}
+		
+		for(Map<String, String> map:orderList) {
+			Long qtId=Long.parseLong(map.get("qtId"));
+			int order=Integer.parseInt(map.get("qtOrder"));
+			int count=eqtService.modifyQTOrder(eId, qtId, order);
+			if(count!=1) {
+				return "modifyEQTError";
+			}
+			
+		}
+		
+		return "success";
+	}
+	
+	/*遗传算法
+	 * 入参：
+	 * questionsDB题库
+	 * expectedExam：期望试题
+	 * 出参：
+	 * TempExam resultUnit最终试题
+	 * */
+	public TempExam geneticAlgorithm(List<Questions> questionsDB,TempExam expectedExam) {
+		//最终试题
+		TempExam resultUnit=null,resultUnitTemp=null;
+		
+		//迭代次数计数器
+		int count=1;
+		
+		//初始化种群
+		List<TempExam> unitList=generatePaperService.cszq(20, expectedExam, questionsDB);
+		resultUnitTemp=getMaxAdapterUnit(unitList);
+		System.out.println("----------------遗传算法组卷---------------------------------------");
+		System.out.println("初始种群-------------");
+		showUnit(unitList);
+		System.out.println("-----------------------开始迭代-------------------------");
+		
+		boolean flag=false;
+		while(!generatePaperService.isEnd(unitList, Constants.EXPAND_ADATPER)) {
+			System.out.println("在"+(count++)+"代未得到结果----------"+unitList.size()+"------------------");
+			
+			if(count>Constants.RUN_Count) {
+				System.out.println("计算"+Constants.RUN_Count+"代仍没有结果，请重新设置条件");
+				break;
+			}
+			
+			//经过选择、交叉后种群数量只剩1或只剩0退出
+			if(unitList.size()<=1) {
+				System.out.println("没有结果");
+				flag=true;
+				break;
+			}
+			
+			//选择--个数一定小于初始化种群
+			unitList=generatePaperService.select(unitList, 10);
+			
+			//交叉
+			unitList=generatePaperService.cross(unitList, 20, expectedExam);
+			
+			//判断是否可以结束
+			if(generatePaperService.isEnd(unitList, Constants.EXPAND_ADATPER)) {
+				break;
+			}
+			
+			//变异
+			unitList=generatePaperService.change(unitList, questionsDB, expectedExam);
+		}
+		
+		if(count<=Constants.RUN_Count&&flag==false) {
+			System.out.println("在第"+count+"代得到结果，结果为：**********************************");
+			System.out.println("期望难度系数："+expectedExam.getDifficultyLevel());
+			
+			showResult(unitList,Constants.EXPAND_ADATPER);
+			
+			//如果有多个，取适应度最大的
+			if(unitList.size()>=1) {
+				resultUnit=getMaxAdapterUnit(unitList);
+			}
+		}else {
+			//没有得到结果，取初始群种中适应度最大的
+			resultUnit=resultUnitTemp;
+		}
+		
+		//最终结果试题
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!最终试题！！！！！！！！！！！！！！！！！！！！！！！");
+		if(resultUnit!=null) {
+			System.out.println("试卷id："+resultUnit.geteId());
+			System.out.println("题目数量\t知识点分布\t\t难度系数\t\t适应度");
+			System.out.println(resultUnit.getQuestionList().size()+"\t"+resultUnit.getKpCoverage()+"\t"+resultUnit.getDifficultyLevel()+"\t"+resultUnit.getAdapterDegree());
+		}	
+		
+		return resultUnit;
+	}
+	
 	
 	//展示种群个体信息
 	public void showUnit(List<TempExam> unitList) {

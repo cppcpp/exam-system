@@ -420,7 +420,7 @@
 							<li>
 
 								<a href="#">个人中心</a>
-
+	
 								<i class="icon-angle-right"></i>
 
 							</li>
@@ -444,7 +444,23 @@
 				<div class="row-fluid">
 					<!-- 内容主体 -->
 					<div class="span12">
-		
+						<table border="1" class="table table-striped table-bordered">
+							<th colspan="4">个人信息</th>
+							<tr>
+								<td>用户名</td>
+								<td>角色</td>
+								<td>直接上级</td>
+								<td>所属科目</td>
+							</tr>
+							<tr>
+								<c:if test="${user!=null}">
+									<td>${user.userName}</td>
+									<td>${user.role}</td>
+									<td>${user.parentName}</td>
+									<td>${user.subjects}</td>
+								</c:if>
+							</tr>
+						</table>
 					</div><!-- 内容主体 -->
 
 				</div>

@@ -489,9 +489,10 @@
 						<div id="set_qt_div">
 							<table class="table table-bordered table-hover">
 								<th colspan="8">
-								设置题目信息&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								试卷标题:<input type="text" id="paper_name">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-								试卷难度：<input type="text" id="paper_difficulty_level" placeholder="试卷难度位于0-1之间">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								设置题目信息&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								试卷标题:<input type="text" id="paper_name">
+								A卷难度：<input type="text" id="paper_difficulty_level_A" placeholder="试卷难度位于0-1之间">
+								B卷难度：<input type="text" id="paper_difficulty_level_B" placeholder="试卷难度位于0-1之间">
 								<button class="btn btn-default" id="generate_paper_button" data-toggle="modal" data-target="#paper_div">生成试卷</button>
 								</th>
 								<tr>
@@ -512,7 +513,7 @@
 												<select style="width:80px" id="set_qt_${qt.tId}_score" name="changes_score"></select>
 											</td>
 											<td>
-												<select style="width: 80px" id="set_qt_${qt.tId}_order"></select>
+												<select style="width:80px" id="set_qt_${qt.tId}_order"></select>
 											</td>
 											<td id="set_qt_${qt.tId}_total_score">
 												

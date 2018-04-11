@@ -19,5 +19,7 @@ public interface UserService {
 	
 	public int updateUser(User user);
 	
+	public boolean deleteUser(Long uId);
+	
 	
 }

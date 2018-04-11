@@ -49,9 +49,20 @@ public class ExamServiceImpl implements ExamService{
 		return examMapper.insert(exam);
 	}
 
+	
+	/*试卷信息存入数据库---exam,exam_questions,exam_questiontype
+	*入参：
+	*eId：试卷Id
+	*uId：生成试卷的用户Id
+	*paperTotalScore：试卷总分
+	*paperDifficutty:试卷难度
+	*eStatus:试卷状态（A卷orB卷）
+	*sId：试卷所属的科目Id
+	*qIdList:试卷中的题目Id集合
+	*qtList：试卷中的题型Id集合List<Map<String, Object> Object为ExamQuestiontype类型
+	*/
 	@Override
 	@Transactional
-	//试卷信息存入数据库---exam,exam_questions,exam_questiontype
 	public boolean inToDB(Long eId,Long uId, String paperName,int paperTotalScore, double paperDifficutty, Byte eStatus,
 			Long sId, List<Long> qIdList, List<Map<String, Object>> qtList) throws BasicException{
 		int count1;
@@ -60,12 +71,25 @@ public class ExamServiceImpl implements ExamService{
 		List<ExamQuestiontype> eqtList=new ArrayList<>();
 		ExamQuestiontype tempExamQuestiontype;
 		Long qtId;Short questionNum;Short typeScore;Byte typeSort;
-		//新建试卷
-		Exam exam=new Exam(eId,sId,uId, new Date(), paperName, paperDifficutty);
-		int count= add(exam);
 		
-		if(count!=1) {
-			throw new BasicException("exam添加失败");
+		
+		Exam exam=get(eId);
+		if(exam==null) {
+			//新建试卷，将试卷存入数据库--A卷
+			if(eStatus==0) {
+				exam=new Exam(eId,sId,uId, new Date(), paperName, paperDifficutty,null);
+			}
+			int count= add(exam);
+			
+			if(count!=1) {
+				throw new BasicException("exam添加失败");
+			}
+		}else {
+			exam.seteDifficultyLevelB(paperDifficutty);
+			int count2=updateByPrimaryKey(exam);
+			if(count2!=1) {
+				throw new BasicException("exam修改失败");
+			}
 		}
 		
 		//存入examQuestions
@@ -78,20 +102,25 @@ public class ExamServiceImpl implements ExamService{
 		if(count1<0) {
 			throw new BasicException("examQuestions添加失败");
 		}
-		//存入examQuestiontype
-		for(Map<String, Object> qtMap:qtList) {
-			qtId=Long.parseLong(qtMap.get("qtId").toString());
-			questionNum=Short.parseShort(qtMap.get("qtNum").toString());
-			typeScore=Short.parseShort(qtMap.get("qtScore").toString());
-			typeSort=Byte.parseByte(qtMap.get("qtOrder").toString());
-			tempExamQuestiontype=new ExamQuestiontype(exam.geteId(),qtId,questionNum,typeScore,typeSort);
-			eqtList.add(tempExamQuestiontype);
+		//存入examQuestiontype--B卷不需要
+		if(eStatus==0) {
+			for(Map<String, Object> qtMap:qtList) {
+				qtId=Long.parseLong(qtMap.get("qtId").toString());
+				questionNum=Short.parseShort(qtMap.get("qtNum").toString());
+				typeScore=Short.parseShort(qtMap.get("qtScore").toString());
+				typeSort=Byte.parseByte(qtMap.get("qtOrder").toString());
+				tempExamQuestiontype=new ExamQuestiontype(exam.geteId(),qtId,questionNum,typeScore,typeSort);
+				eqtList.add(tempExamQuestiontype);
+			}
+			
+			count1=eqtService.add(eqtList);
+			if(count1<0) {
+				throw new BasicException("examQuestions添加失败");
+			}
 		}
 		
-		count1=eqtService.add(eqtList);
-		if(count1<0) {
-			throw new BasicException("examQuestions添加失败");
-		}
+		
+		
 		return true;
 	}
 
@@ -128,7 +157,6 @@ public class ExamServiceImpl implements ExamService{
 
 	@Override
 	public Exam get(Long eId) {
-		// TODO Auto-generated method stub
 		return examMapper.selectByPrimaryKey(eId);
 	}
 

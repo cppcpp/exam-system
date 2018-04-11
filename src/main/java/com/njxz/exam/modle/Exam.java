@@ -13,28 +13,34 @@ public class Exam {
 
     private String eTitle;
 
-    private Double eDifficultyLevel;
+    private Double eDifficultyLevelA;
+
+    private Double eDifficultyLevelB;
 
     private String eAddressA;
 
     private String eAddressB;
     
-    public Exam() {}
-    
-    public Exam(Long eId, Long subjectId, Long userId, Date eAddTime, String eTitle, Double eDifficultyLevel) {
+    public Exam() {
+    	
+    }
+    public Exam(Long eId, Long subjectId, Long userId, Date eAddTime, String eTitle, Double eDifficultyLevelA,
+			Double eDifficultyLevelB) {
+		super();
 		this.eId = eId;
 		this.subjectId = subjectId;
 		this.userId = userId;
 		this.eAddTime = eAddTime;
 		this.eTitle = eTitle;
-		this.eDifficultyLevel = eDifficultyLevel;
+		this.eDifficultyLevelA = eDifficultyLevelA;
+		this.eDifficultyLevelB = eDifficultyLevelB;
 	}
 
     public Long geteId() {
         return eId;
     }
 
-    public void seteId(Long eId) {
+	public void seteId(Long eId) {
         this.eId = eId;
     }
 
@@ -70,12 +76,20 @@ public class Exam {
         this.eTitle = eTitle == null ? null : eTitle.trim();
     }
 
-    public Double geteDifficultyLevel() {
-        return eDifficultyLevel;
+    public Double geteDifficultyLevelA() {
+        return eDifficultyLevelA;
     }
 
-    public void seteDifficultyLevel(Double eDifficultyLevel) {
-        this.eDifficultyLevel = eDifficultyLevel;
+    public void seteDifficultyLevelA(Double eDifficultyLevelA) {
+        this.eDifficultyLevelA = eDifficultyLevelA;
+    }
+
+    public Double geteDifficultyLevelB() {
+        return eDifficultyLevelB;
+    }
+
+    public void seteDifficultyLevelB(Double eDifficultyLevelB) {
+        this.eDifficultyLevelB = eDifficultyLevelB;
     }
 
     public String geteAddressA() {

@@ -259,13 +259,14 @@ function parseData(data){
 //点击生成试卷按钮
 function generateButtonClick(sId){
 	var paperName= $("#paper_name").val();
-	var paperDiffLev= $("#paper_difficulty_level").val();
+	var paperDiffLevA= $("#paper_difficulty_level_A").val();
+	var paperDiffLevB=$("#paper_difficulty_level_B").val();
 	var qtTitle,qtNum,qtScore,qtOrder,qtTotalScore,nunms,scores;
 	//存放试题信息
 	qtList=new Array();
 	
 	$("#paper_table").html("")
-	$("#paper_table").append("<th>试卷标题："+paperName+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;试卷难度："+paperDiffLev+"</th>")
+	$("#paper_table").append("<th colspan='5'>试卷标题："+paperName+"&nbsp;&nbsp;&nbsp;&nbsp;A卷难度"+paperDiffLevA+"&nbsp;&nbsp;&nbsp;&nbsp;B卷难度："+paperDiffLevB+"</th>")
 	$("#paper_table").append("<tr>" +
 			"<td>题型</td>" +
 			"<td>题目个数</td>" +
@@ -343,25 +344,43 @@ function generateButtonClick(sId){
 //生成试卷
 function generatePaper(sId){
 		var paperName= $("#paper_name").val();
-		var paperDiffLev= $("#paper_difficulty_level").val();
-		var paperDiffFalg=true;
+		var paperDiffLevA= $("#paper_difficulty_level_A").val();
+		var paperDiffLevB= $("#paper_difficulty_level_B").val();
+		var paperDiffFalgA=true;
+		var paperDiffFalgB=true;
 		
 		if(paperName==""){                                                                       
 			alert("请填写试卷标题")
 		}
-		if(paperDiffLev==""){
-			paperDiffFalg=false;
-			alert("请填写试卷难度系数")
+		if(paperDiffLevA==""){
+			paperDiffFalgA=false;
+			alert("请填写A卷难度系数")
 		}else{
-				paperDiffLev=Number(paperDiffLev);
+				paperDiffLevA=Number(paperDiffLevA);
 				//Number.NAN--Not a Number
-				if(isNaN(paperDiffLev)){
-					alert("试卷难度系数格式错误")
-					paperDiffFalg=false;
+				if(isNaN(paperDiffLevA)){
+					alert("A卷难度系数格式错误")
+					paperDiffFalgA=false;
 					
-				}else if(paperDiffLev<0||paperDiffLev>1){
-					alert("试卷难度必须位于0-1之间")
-					paperDiffFalg=false;
+				}else if(paperDiffLevA<0||paperDiffLevA>1){
+					alert("A卷难度必须位于0-1之间")
+					paperDiffFalgA=false;
+				}
+			
+		}
+		if(paperDiffLevB==""){
+			paperDiffFalgB=false;
+			alert("请填写B卷难度系数")
+		}else{
+				paperDiffLevB=Number(paperDiffLevB);
+				//Number.NAN--Not a Number
+				if(isNaN(paperDiffLevB)){
+					alert("B卷难度系数格式错误")
+					paperDiffFalgB=false;
+					
+				}else if(paperDiffLevB<0||paperDiffLevB>1){
+					alert("B卷难度必须位于0-1之间")
+					paperDiffFalgB=false;
 				}
 			
 		}
@@ -373,18 +392,17 @@ function generatePaper(sId){
 			alert("总分不能为空，请选择试题信息");
 		}
 		
-		if(paperName!=""&&paperDiffFalg&&orderFlag&&scoresFlag){
-//			resultMap.set("paperName",paperName);
-//			resultMap.set("paperDiffLev",paperDiffLev);
+		if(paperName!=""&&paperDiffFalgA&&paperDiffFalgB&&orderFlag&&scoresFlag){
 			resultMap["paperName"]=paperName;
-			resultMap["paperDiffLev"]=paperDiffLev;
+			resultMap["paperDiffLevA"]=paperDiffLevA;
+			resultMap["paperDiffLevB"]=paperDiffLevB;
 			
 			resultMap["sId"]=sId;
 			resultMap["kps"]=kps;
 			
 			console.log(resultMap)
 			var jsonData=JSON.stringify(resultMap);
-			console.log(jsonData)
+			//console.log(jsonData)
 			
 			
 			$.ajax({
@@ -393,10 +411,20 @@ function generatePaper(sId){
 				contentType: "application/json; charset=utf-8",
 				data:jsonData,
 				success:function(data){
-					
+					//alert(data)
+					if(data.rtnCode=="-9999"){
+						alert(data.rtnMessage)
+					}
+					if(data.rtnCode=="0"){
+						if(confirm(data.rtnMessage)){
+							//点击确定按钮
+							window.location.href="get"
+						}
+					}
 				},
-				error:function(){}
-				
+				error:function(){
+					alert("error");
+				}
 			})
 			
 		}

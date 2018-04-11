@@ -33,5 +33,5 @@ public class ExamQuestionsServiceImpl implements ExamQuestionsService{
 		// TODO Auto-generated method stub
 		return examQuestionsMapper.deleteExamQuestionsByEId(eId);
 	}
-	
+
 }

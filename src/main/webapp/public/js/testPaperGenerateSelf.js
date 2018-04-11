@@ -448,7 +448,7 @@ $(function(){
 				contentType:'application/json;charset=utf-8',
 				data:jsonData,
 				success:function(data){
-					console.log("返回data："+data)
+					//console.log("返回data："+data)
 					if(data.rtnCode=="-9999"){
 						alert(data.rtnMessage)
 					}

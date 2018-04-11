@@ -30,5 +30,5 @@ public interface QuestionsMapper {
     
     public int countgetBy(Long qId);
     
-    public List<Questions> getQuestionsByEIdAndEQTId(@Param("eId")Long eId,@Param("eqtId") Long eqtId);
+    public List<Questions> getQuestionsByEIdAndEQTId(@Param("eId")Long eId,@Param("eqtId") Long eqtId,@Param("eType")int eType);
 }

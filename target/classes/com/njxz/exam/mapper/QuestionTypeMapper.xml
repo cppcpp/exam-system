@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.njxz.exam.dao.QuestionTypeMapper">
+  <resultMap id="BaseResultMap" type="com.njxz.exam.modle.QuestionType">
+    <id column="t_id" jdbcType="BIGINT" property="tId" />
+    <result column="t_title" jdbcType="VARCHAR" property="tTitle" />
+    <result column="t_desc" jdbcType="VARCHAR" property="tDesc" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    t_id, t_title, t_desc
+  </sql>
+  <select id="selectByExample" parameterType="com.njxz.exam.modle.QuestionTypeExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from question_type
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from question_type
+    where t_id = #{tId,jdbcType=BIGINT}
+  </select>
+  
+  <select id="selectAllQuestionType" resultMap="BaseResultMap">
+  	select * from question_type
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from question_type
+    where t_id = #{tId,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.njxz.exam.modle.QuestionTypeExample">
+    delete from question_type
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.njxz.exam.modle.QuestionType">
+    insert into question_type (t_id, t_title, t_desc
+      )
+    values (#{tId,jdbcType=BIGINT}, #{tTitle,jdbcType=VARCHAR}, #{tDesc,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.njxz.exam.modle.QuestionType">
+    insert into question_type
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="tId != null">
+        t_id,
+      </if>
+      <if test="tTitle != null">
+        t_title,
+      </if>
+      <if test="tDesc != null">
+        t_desc,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="tId != null">
+        #{tId,jdbcType=BIGINT},
+      </if>
+      <if test="tTitle != null">
+        #{tTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="tDesc != null">
+        #{tDesc,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.njxz.exam.modle.QuestionTypeExample" resultType="java.lang.Long">
+    select count(*) from question_type
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update question_type
+    <set>
+      <if test="record.tId != null">
+        t_id = #{record.tId,jdbcType=BIGINT},
+      </if>
+      <if test="record.tTitle != null">
+        t_title = #{record.tTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tDesc != null">
+        t_desc = #{record.tDesc,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update question_type
+    set t_id = #{record.tId,jdbcType=BIGINT},
+      t_title = #{record.tTitle,jdbcType=VARCHAR},
+      t_desc = #{record.tDesc,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.njxz.exam.modle.QuestionType">
+    update question_type
+    <set>
+      <if test="tTitle != null">
+        t_title = #{tTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="tDesc != null">
+        t_desc = #{tDesc,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where t_id = #{tId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.njxz.exam.modle.QuestionType">
+    update question_type
+    set t_title = #{tTitle,jdbcType=VARCHAR},
+      t_desc = #{tDesc,jdbcType=VARCHAR}
+    where t_id = #{tId,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -20,4 +20,6 @@ public interface ExamQuestiontypeService {
 	//通过试卷id删除试卷的题型
 	int deleteExamQuestiontypesByEId(Long eId);
 	
+	//根据试卷id+试题类型id修改试卷中的题型排序
+	int modifyQTOrder(Long eId,Long qtId,int order);
 }
