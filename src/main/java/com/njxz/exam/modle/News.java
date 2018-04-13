@@ -51,4 +51,9 @@ public class News {
 	public void setnAddTime(Date nAddTime) {
 		this.nAddTime = nAddTime;
 	}
+
+	@Override
+	public String toString() {
+		return "News [nId=" + nId + ", userId=" + userId + ", nContent=" + nContent + ", nAddTime=" + nAddTime + "]";
+	}
 }

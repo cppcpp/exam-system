@@ -1,7 +1,11 @@
 package com.njxz.exam.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -15,7 +19,11 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.njxz.exam.modle.News;
+import com.njxz.exam.modle.SystemConfig;
 import com.njxz.exam.modle.User;
+import com.njxz.exam.service.NewsService;
+import com.njxz.exam.service.SystemConfigService;
 import com.njxz.exam.service.UserService;
 import com.njxz.exam.util.Logable;
 import com.njxz.exam.util.StringUtil;
@@ -27,11 +35,15 @@ public class HomeController extends Logable {
 	private UserService userService;
 	@Autowired
 	private HttpSession session;
+	@Autowired
+	private NewsService newsService;
+	@Autowired
+	private SystemConfigService scs;
 
-	//测试
-	@RequestMapping(value="/test",method=RequestMethod.GET)
-	public String test() {
-		return "test";
+	@RequestMapping(value="/",method=RequestMethod.GET)
+	public String test(Model model) {
+		model.addAttribute("user", new User());
+		return "redirect:/login";
 	}
 	
 	
@@ -86,7 +98,45 @@ public class HomeController extends Logable {
 	// 处理对首页--index发起的请求
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String index(Model model) {
-		model.addAttribute("user", session.getAttribute("user"));
+		SimpleDateFormat format=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		List<Map<String, Object>> resultList=new ArrayList<>();
+		
+		User user=(User) session.getAttribute("user");
+		if(user==null) {
+			return "login";
+		}
+		
+		model.addAttribute("user", user);
+		String power=user.getPower()==1?"录入人员":user.getPower()==2?"教师":user.getPower()==3?"管理员":"";
+		model.addAttribute("power", power);
+		
+		//公告信息---取最近的五条
+		List<News> lists=newsService.latelyNews(5);
+		for(News news:lists) {
+			Map<String, Object> map=new HashMap<String, Object>();
+			map.put("nId", news.getnId().toString());
+			map.put("nContent", news.getnContent());
+			map.put("addTime",format.format(news.getnAddTime()));
+			map.put("userId", news.getUserId());
+			//添加人姓名
+			if(news.getUserId()!=null) {
+				User user2=userService.findUser(news.getUserId().toString());
+				if(user2!=null) {
+					map.put("userName",user2.getName());
+				}else {
+					map.put("userName", "该用户已注销");
+				}
+			}else {
+				map.put("userName","");
+			}
+			resultList.add(map);
+		}
+		model.addAttribute("newsList", resultList);
+		
+		//系统信息
+		List<SystemConfig> list = scs.getAll();
+		model.addAttribute("systemConfigs", list);
+		
 		return "index";
 	}
 	

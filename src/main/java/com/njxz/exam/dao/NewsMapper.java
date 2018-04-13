@@ -31,6 +31,5 @@ public interface NewsMapper {
     
     List<News> getAll();
     
-    @Select("select * from news order by n_add_time limit 0,#{count}")
     List<News> latelyNews(@Param("count")int count);
 }

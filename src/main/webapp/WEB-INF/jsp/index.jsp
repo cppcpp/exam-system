@@ -428,14 +428,47 @@
 				<!-- END PAGE HEADER-->
 
 				<!-- BEGIN PAGE CONTENT-->
-
 				<div class="row-fluid">
-
 					<div class="span12">
-						<!-- 内容主体部分 -->
-						欢迎你，<c:out value="${user.name}"/>
+						欢迎您，<c:out value="${user.name}"/>，您的身份是<c:out value="${power}" />
 					</div>
-
+				</div>
+				<div class="row-fluid">
+						<div class="span7">
+						<table border="1" class="table table-striped table-bordered">
+							<th colspan="3">公告信息</th>
+							<tr>
+								<td>发布信息</td>
+								<td>发布人</td>
+								<td>发布时间</td>
+							</tr>
+							
+							<c:if test='${newsList!=null}'>
+								<c:forEach items="${newsList}" var="news">
+								<tr>
+									<td>${news.nContent}</td>
+									<td>${news.userName}</td>
+									<td>${news.addTime }</td>
+								</tr>
+								</c:forEach>
+							</c:if>
+						</table>
+						</div>
+						
+						<div class="span5">
+						<table border="1" class="table table-striped table-bordered">
+							<th colspan="2">系统信息</th>
+							
+							<c:if test='${systemConfigs!=null}'>
+								<c:forEach items="${systemConfigs}" var="systemConfig">
+								<tr>
+									<td>${systemConfig.key}</td>
+									<td>${systemConfig.value}</td>
+								</tr>
+								</c:forEach>
+							</c:if>
+						</table>
+						</div>
 				</div>
 				
 				<!-- END PAGE CONTENT-->

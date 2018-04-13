@@ -197,4 +197,8 @@
       n_add_time = #{nAddTime,jdbcType=TIMESTAMP}
     where n_id = #{nId,jdbcType=BIGINT}
   </update>
+  
+  <select id="latelyNews" resultMap="BaseResultMap">
+  	select * from news order by n_add_time limit 0,#{count}
+  </select>
 </mapper>
