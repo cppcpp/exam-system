@@ -21,14 +21,18 @@
    * 该模块仅供管理员发布一些系统消息使用；
    * 其中有系统设置模块，包括查看系统设置信息和设置系统设置信息；公告管理，包括查看公告信息和 设置公告信息。当然，公告信息是任何人都可以看到的；
    * 数据库管理，包括备份数据库功能。
- ##### 5.开发关键字：win10 eclipse mysql Tomcat SSM Maven Hibernate validation log4j CKEditor4 Freemarker 遗传算法
+ ##### 5.开发关键字：
+ win10 eclipse mysql Tomcat SSM Maven Hibernate validation log4j CKEditor4 Freemarker 遗传算法
  ### 6.项目中文件说明
 * 其余目录结构均为eclipse生成maven项目的目录结构
 * spring配置文件地址：根目录/WEB-INF/config/spring
 * 其余配置文件地址：src/main/resources/
-####7.系统架构
-####8.代码架构
-    
+#### 7.系统架构
+![系统功能架构](https://github.com/cppcpp/exam-system/blob/master/src/main/webapp/files/%E5%8A%9F%E8%83%BD%E6%9E%B6%E6%9E%84.png)
+#### 8.代码架构
+![代码架构](https://github.com/cppcpp/exam-system/blob/master/src/main/webapp/files/%E4%BB%A3%E7%A0%81%E6%9E%B6%E6%9E%84.png)
+#### 9.遗传算法流程图
+![遗传算法](https://github.com/cppcpp/exam-system/blob/master/src/main/webapp/files/%E9%81%97%E4%BC%A0%E7%AE%97%E6%B3%95%E6%B5%81%E7%A8%8B%E5%9B%BE.png)
 ###  部分页面展示
 ![登录页面](https://github.com/cppcpp/exam-system/raw/master/src/main/webapp/public/images/1.png)
 ![自动生成试卷页面](https://github.com/cppcpp/exam-system/raw/master/src/main/webapp/public/images/2.png)
