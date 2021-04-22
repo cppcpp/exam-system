@@ -8,7 +8,7 @@
 	
 	
 	<properties>
-		<mybatis.version>3.3.0</mybatis.version>
+		<mybatis.version>3.5.6</mybatis.version>
 		<mybatis-spring.version>1.3.0</mybatis-spring.version>
 		<org.springframework-version>5.0.0.RELEASE</org.springframework-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
